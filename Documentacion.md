@@ -3,6 +3,52 @@
 
 ---
 
+## 0. ESTRUCTURA DE RAMAS (GIT FLOW)
+
+### Rama Principal – main
+- Contiene el código estable y validado.
+- Solo recibe merges desde la rama de verificación (release).
+- Nunca se trabaja directamente en main.
+- Representa la versión oficial del proyecto.
+
+### Rama de Verificación – release
+- Actúa como puente entre dev y main.
+- Aquí se realizan las últimas pruebas de integración y verificación de errores.
+- Solo se mergea a main cuando se confirma que todo funciona correctamente.
+- Ejemplo de uso:
+  - release/v1.0.0 → versión candidata a producción.
+
+### Rama de Desarrollo – dev
+- Es la rama donde se integran todas las funcionalidades en progreso.
+- Recibe merges de las ramas de módulos o cambios específicos.
+- Puede contener código en evolución, pero debe mantenerse funcional.
+
+### Ramas de Funcionalidad – feature/*
+- Cada módulo o cambio importante se desarrolla en su propia rama.
+- Ejemplos:
+  - feature/modulo-usuarios
+  - feature/modulo-categorias
+  - feature/modulo-productos
+  - feature/filtros-producto
+- Flujo:
+  - Se crea la rama desde dev.
+  - Se realizan commits documentados.
+  - Se mergea a dev mediante Pull Request.
+
+### Flujo de Integración
+- Desarrollo: se trabaja en ramas feature/*.
+- Integración inicial: se mergea cada feature/* en dev.
+- Verificación final: se mergea dev en release para pruebas completas.
+- Producción: se mergea release en main cuando todo está validado.
+
+```
+main  <---  release  <---  dev  <---  feature/modulo-usuarios
+                               <---  feature/modulo-productos
+                               <---  feature/modulo-categorias
+```
+
+---
+
 ## 1. REQUERIMIENTOS FUNCIONALES
 
 ### Módulo de Usuarios
