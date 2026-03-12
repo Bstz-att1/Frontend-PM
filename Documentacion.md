@@ -101,10 +101,17 @@ frontend/
 │   ├── users.js       # UI usuarios
 │   ├── categories.js  # UI categorías
 │   ├── products.js    # UI productos
-│   └── app.js         # Inicialización
+│   ├── app.js         # Inicialización
+│   └── index.js       # Archivo barril - exporta e importa todos los módulos
 └── assets/
     └── images/
 ```
+
+> **Nota Importante:** Se debe utilizar un archivo barril (`index.js`) como punto central para exportar e importar todos los módulos del frontend. Esto permite:
+> - Importar todos los módulos desde un único punto
+> - Facilitar la navegación y mantenimiento del código
+> - Evitar rutas relativas extensas (ej: `../components/`)
+> - Mantener un orden consistente en las importaciones
 
 ---
 
