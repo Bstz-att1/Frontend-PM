@@ -106,17 +106,19 @@ function renderUsersTable(container, users) {
     .join("");
 
   container.innerHTML = `
-    <table class="users-table">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Nombre</th>
-          <th>Username</th>
-          <th>Rol</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>
+    <div class="table-wrapper" role="region" aria-label="Tabla de usuarios registrados">
+      <table class="users-table table-pro">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Username</th>
+            <th>Rol</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
   `;
 }
 
@@ -125,7 +127,7 @@ export function renderUsuariosSection(content) {
 
   content.innerHTML = `
     <h2>Administración de usuarios</h2>
-    <p>Desde aquí puedes crear usuarios internos y visualizar el listado dinámico actual.</p>
+    <p>Gestiona cuentas internas y consulta el listado dinámico con una visualización clara y profesional.</p>
 
     <section class="panel-card">
       <h3>Crear usuario</h3>
