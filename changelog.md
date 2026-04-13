@@ -635,5 +635,40 @@ Ambos con:
 
 ---
 
+### 🧾 Auditoría: productos creados por cada usuario (iteración reciente)
+
+#### `assets/js/inventario.js`
+Se incorporó persistencia del inventario en almacenamiento local para habilitar consulta transversal desde otros módulos.
+
+- Nuevo almacenamiento:
+  - Clave: `inventarioProductos` en `localStorage`.
+- Comportamiento agregado:
+  - `loadProductos()` carga productos guardados al renderizar Inventario.
+  - `saveProductos()` persiste productos cada vez que se registra uno nuevo.
+- Efecto funcional:
+  - Los productos ya no viven solo en memoria temporal del módulo.
+  - Se conserva trazabilidad (`creadoPor`, `fechaCreacion`) para auditoría.
+
+#### `assets/js/auditoria.js`
+Se agregó reporte de auditoría para visualizar productos creados por usuario.
+
+- Nueva sección de reporte:
+  - Título: **Productos creados por cada usuario**.
+- Flujo implementado:
+  - Lectura de productos desde `localStorage` (`inventarioProductos`).
+  - Agrupación por campo `creadoPor`.
+  - Render por usuario con:
+    - nombre de usuario,
+    - total de productos creados,
+    - listado de productos (nombre, categoría, fecha).
+- Estado sin datos:
+  - Mensaje: `"No hay productos registrados para auditar."`
+
+#### Resultado de negocio
+- Auditoría ahora muestra trazabilidad real de creación de productos por responsable.
+- Se mantiene el formulario de hallazgos existente sin romper su validación.
+
+---
+
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
