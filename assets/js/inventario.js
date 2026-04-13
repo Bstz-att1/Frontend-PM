@@ -1,4 +1,6 @@
 export function renderInventarioSection(content) {
+  const categorias = ["cocina", "barra", "suministros"];
+
   content.innerHTML = `
     <h2>Inventario</h2>
     <p>Administra productos y categorías en un solo módulo para mantener control centralizado del stock.</p>
@@ -19,10 +21,72 @@ export function renderInventarioSection(content) {
       <button type="submit">Registrar producto</button>
       <div id="inventario-errors" aria-live="polite"></div>
     </form>
+
+    <section id="categorias-module" aria-labelledby="categorias-title">
+      <h3 id="categorias-title">Categorías</h3>
+      <p>Crea y consulta las categorías de productos del inventario.</p>
+
+      <form id="categoria-form" novalidate>
+        <label for="categoria-nombre">Nueva categoría</label>
+        <input id="categoria-nombre" name="categoriaNombre" type="text" />
+        <button type="submit">Crear categoría</button>
+        <div id="categoria-messages" aria-live="polite"></div>
+      </form>
+
+      <h4>Listado de categorías</h4>
+      <ul id="categorias-list"></ul>
+    </section>
   `;
 
   const form = content.querySelector("#inventario-form");
   const errorsContainer = content.querySelector("#inventario-errors");
+  const categoriaForm = content.querySelector("#categoria-form");
+  const categoriaMessages = content.querySelector("#categoria-messages");
+  const categoriasList = content.querySelector("#categorias-list");
+
+  const soloTextoRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$/;
+
+  function renderCategoriasList() {
+    categoriasList.innerHTML = categorias
+      .map((categoria) => `<li>${categoria}</li>`)
+      .join("");
+  }
+
+  function normalizeText(value) {
+    return value
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ");
+  }
+
+  categoriaForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const nuevaCategoriaRaw = categoriaForm.categoriaNombre.value;
+    const nuevaCategoria = normalizeText(nuevaCategoriaRaw);
+    const errores = [];
+
+    if (!nuevaCategoria) {
+      errores.push("El nombre de la categoría es requerido.");
+    } else if (!soloTextoRegex.test(nuevaCategoria)) {
+      errores.push("La categoría debe contener solo texto.");
+    } else if (categorias.includes(nuevaCategoria)) {
+      errores.push("La categoría ya existe en el listado.");
+    }
+
+    if (errores.length > 0) {
+      categoriaMessages.innerHTML = `
+        <ul>
+          ${errores.map((error) => `<li>${error}</li>`).join("")}
+        </ul>
+      `;
+      return;
+    }
+
+    categorias.push(nuevaCategoria);
+    renderCategoriasList();
+    categoriaForm.reset();
+    categoriaMessages.innerHTML = `<p>Categoría creada correctamente.</p>`;
+  });
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -32,8 +96,6 @@ export function renderInventarioSection(content) {
     const categoria = form.categoria.value.trim();
     const cantidad = Number(form.cantidadInicial.value);
     const proveedor = form.proveedor.value.trim();
-
-    const soloTextoRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$/;
 
     if (!nombre) {
       errores.push("El nombre del producto es requerido.");
@@ -59,6 +121,8 @@ export function renderInventarioSection(content) {
 
     renderErrors(errorsContainer, errores);
   });
+
+  renderCategoriasList();
 }
 
 function renderErrors(container, errors) {
