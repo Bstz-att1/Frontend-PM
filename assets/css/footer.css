@@ -1,0 +1,12 @@
+.site-footer {
+  margin-top: 0.2rem;
+  padding: 1rem;
+  text-align: center;
+  color: var(--color-on-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-strong) 100%);
+}
+
+.site-footer__text {
+  margin: 0;
+  letter-spacing: 0.2px;
+}
