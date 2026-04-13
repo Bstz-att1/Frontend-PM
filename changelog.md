@@ -44,15 +44,13 @@ Se actualizó la estructura y contenido para reflejar el enfoque de gestión int
   - Resumen del día
   - Accesos rápidos
   - Estado operativo
-- Ruta del script corregida a:
-  - `assets/js/main.js`
 
 ---
 
 ### ⚙️ `assets/js/main.js`
 Se ajustó la lógica de render para que los mensajes coincidan con el menú actual.
 
-#### Cambios funcionales
+#### Cambios funcionales iniciales
 - `renderWelcome()`:
   - Mensaje inicial actualizado al contexto interno operativo.
 - `renderSection(section)`:
@@ -66,13 +64,49 @@ Se ajustó la lógica de render para que los mensajes coincidan con el menú act
     - `Auditoría`
     - `Administración` (nuevo módulo para gestión de usuarios)
 
-#### Módulo “Administración”
-Muestra contenido inicial para:
-- Crear usuarios administrativos
-- Actualizar roles y permisos
-- Activar/desactivar accesos
+#### Estado actual
+- `main.js` es el archivo que gestiona la lógica de la app (init, navegación y render).
+- Consume los módulos mediante importaciones desde el archivo barril:
+  - `./index.js`
+
+---
+
+### 🧩 Modularización por secciones (Frontend JS)
+Se separó la lógica de render de cada sección en módulos independientes para mejorar escalabilidad, claridad y mantenimiento.
+
+#### Nuevos módulos creados
+- `assets/js/inventario.js`
+  - Exporta `renderInventarioSection(content)` con el contenido de Inventario.
+- `assets/js/movimientos.js`
+  - Exporta `renderMovimientosSection(content)` con el contenido de Movimientos.
+- `assets/js/auditoria.js`
+  - Exporta `renderAuditoriaSection(content)` con el contenido de Auditoría.
+- `assets/js/administracion.js`
+  - Exporta `renderAdministracionSection(content)` con el contenido de Administración de usuarios.
+
+---
+
+### ⚙️ `assets/js/index.js` (archivo barril)
+Se usa exclusivamente como archivo barril para centralizar exportaciones de módulos.
+
+#### Contenido del barril
+- `export { renderInventarioSection } from "./inventario.js";`
+- `export { renderMovimientosSection } from "./movimientos.js";`
+- `export { renderAuditoriaSection } from "./auditoria.js";`
+- `export { renderAdministracionSection } from "./administracion.js";`
+
+---
+
+### 🧱 `index.html` (módulos ES)
+Se configuró la carga del script principal con ES Modules para que `main.js` pueda importar desde `index.js`.
+
+#### Cambio aplicado
+- Antes:
+  - `<script src="assets/js/main.js"></script>`
+- Ahora:
+  - `<script type="module" src="assets/js/main.js"></script>`
 
 ---
 
 ### 📝 Archivos de registro
-- Se crea este archivo `changelog.md` para registrar los cambios realizados.
+- Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
