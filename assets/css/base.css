@@ -8,6 +8,9 @@
   --color-surface: #ffffff;
   --color-surface-soft: #f8fbff;
   --color-border: #d8e3f1;
+  --color-surface-alt: #fbfcff;
+  --color-soft-hover: rgba(47, 93, 138, 0.08);
+  --color-overlay-soft: rgba(37, 99, 235, 0.15);
 
   --color-text: #1f2a37;
   --color-text-muted: #4b5563;
@@ -34,6 +37,33 @@
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+[data-theme="dark"] {
+  --color-primary: #4f8dc8;
+  --color-primary-strong: #3b6f9f;
+  --color-secondary: #5aa893;
+  --color-accent: #60a5fa;
+
+  --color-bg: #0f1722;
+  --color-surface: #172230;
+  --color-surface-soft: #1d2b3c;
+  --color-border: #2f435b;
+  --color-surface-alt: #223247;
+  --color-soft-hover: rgba(96, 165, 250, 0.18);
+  --color-overlay-soft: rgba(96, 165, 250, 0.24);
+
+  --color-text: #e6edf7;
+  --color-text-muted: #bfccdd;
+  --color-text-soft: #9fb2ca;
+  --color-on-primary: #f8fbff;
+
+  --color-success: #7ad38a;
+  --color-warning: #f6b85f;
+  --color-danger: #ef7f7f;
+
+  --shadow-sm: 0 8px 20px rgba(5, 10, 18, 0.4);
+  --shadow-md: 0 14px 30px rgba(5, 10, 18, 0.5);
 }
 
 body.app {
