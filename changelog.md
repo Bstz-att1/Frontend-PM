@@ -408,5 +408,100 @@ Se extendió el render para soportar preselección de tipo de movimiento desde e
 
 ---
 
+### 🔐 Módulo de Usuarios + Autenticación básica (iteración reciente)
+
+#### `assets/js/usuarios.js` (nuevo)
+Se incorporó el módulo de usuarios con persistencia local y autenticación básica.
+
+- Persistencia:
+  - `localStorage` para usuarios (`rg_users`).
+  - `sessionStorage` para sesión activa (`rg_current_user`).
+- Datos base:
+  - Usuario semilla: `admin / admin123` (rol Administrador).
+- Funciones principales:
+  - `renderUsuariosSection(content)`:
+    - Formulario de creación (nombre, username, password, rol).
+    - Listado dinámico de usuarios en tabla.
+    - Validaciones de campos y username único.
+  - `renderLoginSection(content, onLoginSuccess)`:
+    - Formulario de login básico con validación de credenciales.
+  - `tryLogin(username, password)`, `getCurrentSessionUser()`, `logoutSessionUser()`.
+- Seguridad de salida UI:
+  - Escapado HTML en render de datos (`escapeHtml`) para prevenir inyección en el DOM.
+
+#### `assets/js/index.js`
+Se amplió el archivo barril para exponer funciones del módulo de usuarios y sesión:
+
+- `renderUsuariosSection`
+- `renderLoginSection`
+- `getCurrentSessionUser`
+- `logoutSessionUser`
+
+---
+
+### 🧭 Integración de autenticación en flujo principal (iteración reciente)
+
+#### `assets/js/main.js`
+Se adaptó la inicialización de la app para exigir autenticación antes de usar navegación operativa.
+
+- Flujo de arranque:
+  - Si hay sesión activa: habilita navegación y renderiza bienvenida.
+  - Si no hay sesión: deshabilita navegación y muestra login.
+- Se añadió gestión visual de navegación:
+  - `setNavigationEnabled(enabled)` para bloquear/desbloquear links de menú y sidebar.
+- Botón de sesión:
+  - `ensureLogoutButton()` crea/inyecta botón `Cerrar sesión` dentro de `#session-actions`.
+  - El botón **solo se muestra cuando hay sesión iniciada**.
+  - Al cerrar sesión:
+    - limpia sesión
+    - oculta botón
+    - vuelve a pantalla de login
+    - deshabilita navegación.
+
+---
+
+### 🧱 Ajustes estructurales en cabecera y navegación (iteración reciente)
+
+#### `index.html`
+Se actualizó la cabecera para soportar acciones de sesión sin romper la navegación existente:
+
+- Nuevo contenedor:
+  - `<div class="header-actions">`
+  - `<div class="session-actions" id="session-actions"></div>`
+- Menú principal:
+  - Se elimina opción separada “Usuarios”.
+  - Se mantiene “Administración” como punto único para gestión de usuarios.
+
+---
+
+### 🗂️ Consolidación de Administración con Usuarios (iteración reciente)
+
+#### `assets/js/administracion.js`
+Se simplificó el módulo para evitar contenido duplicado.
+
+- Antes:
+  - Renderizaba título/texto propios + wrapper, y luego render de usuarios.
+- Ahora:
+  - `renderAdministracionSection(content)` delega directamente en `renderUsuariosSection(content)`.
+
+Resultado:
+- Administración muestra directamente el módulo de usuarios.
+- Se elimina el doble encabezado/texto innecesario.
+
+---
+
+### 🎨 Estilos para acciones de sesión en header (iteración reciente)
+
+#### `assets/css/styles.css`
+Se añadieron estilos coherentes con el tema para sesión/logout (sin estilos inline en JS):
+
+- `.header-actions`
+- `.session-actions`
+- `.logout-btn`
+- Estados `:hover` y `:active`
+- Ajustes responsive para cabecera y distribución de acciones de sesión.
+
+---
+
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
