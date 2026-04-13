@@ -1,7 +1,96 @@
 .main-content {
-  padding: 1.35rem;
+  padding: 1.6rem;
   background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-soft) 100%);
   border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.main-content > h2 {
+  margin: 0;
+  text-align: center;
+  color: var(--color-primary);
+  letter-spacing: 0.2px;
+}
+
+.main-content > p {
+  margin: 0 auto;
+  max-width: 920px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.main-content > section,
+.main-content > form {
+  width: min(100%, 980px);
+  margin: 0 auto;
+}
+
+.panel-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
+  box-shadow: var(--shadow-sm);
+  padding: 1rem 1.05rem;
+}
+
+.panel-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.65rem;
+  color: var(--color-primary);
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.table-pro {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+}
+
+.table-pro thead th {
+  text-align: left;
+  padding: 0.75rem 0.7rem;
+  background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-primary-strong) 100%);
+  color: var(--color-on-primary);
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.table-pro tbody td {
+  padding: 0.7rem;
+  border-top: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.table-pro tbody tr:nth-child(even) {
+  background: var(--color-surface-soft);
+}
+
+.table-pro tbody tr:hover {
+  background: var(--color-soft-hover);
+}
+
+.list-clean {
+  margin: 0;
+  padding-left: 1rem;
+}
+
+.list-clean li + li {
+  margin-top: 0.4rem;
+}
+
+.auditoria-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
 }
 
 .main-content a {
@@ -20,7 +109,7 @@
   padding: 1.15rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-alt) 100%);
   box-shadow: var(--shadow-sm);
 }
 
@@ -39,7 +128,7 @@
   padding: 0.65rem 0.75rem;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: #fff;
+  background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
   transition: var(--transition-base);
@@ -55,7 +144,7 @@
 .main-content form textarea:focus {
   outline: none;
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px var(--color-overlay-soft);
 }
 
 .main-content form button[type="submit"] {
@@ -82,9 +171,9 @@
 .main-content__intro {
   margin-bottom: 1.2rem;
   padding: 1.05rem 1.1rem;
-  border: 1px solid #cfe0f5;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, #ffffff 0%, #f3f9ff 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-soft) 100%);
   box-shadow: var(--shadow-md);
 }
 
@@ -96,17 +185,17 @@
 }
 
 .main-content__card {
-  border: 1px solid #d5e3f3;
+  border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0.9rem 0.95rem;
-  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-  box-shadow: 0 6px 14px rgba(47, 93, 138, 0.08);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-soft) 100%);
+  box-shadow: 0 6px 14px var(--color-soft-hover);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .main-content__card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(47, 93, 138, 0.14);
+  box-shadow: 0 10px 20px var(--color-soft-hover);
 }
 
 /* Inventario y productos */
@@ -116,7 +205,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 1rem 1.05rem;
-  background: linear-gradient(180deg, #ffffff 0%, #f6faff 100%);
+  background: linear-gradient(180deg, var(--color-surface) 0%, var(--color-surface-soft) 100%);
   box-shadow: 0 10px 20px rgba(31, 42, 55, 0.08);
 }
 
@@ -143,6 +232,22 @@
   font: inherit;
 }
 
+#inventario-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+#inventario-filtros h3 {
+  flex: 1 1 100%;
+}
+
+#inventario-filtros label,
+#inventario-filtros input,
+#inventario-filtros select {
+  flex: 1 1 220px;
+}
+
 #inventario-table-container {
   width: 100%;
   overflow-x: auto;
@@ -155,7 +260,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   overflow: hidden;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 #inventario-table-container thead th {
@@ -174,11 +279,11 @@
 }
 
 #inventario-table-container tbody tr:nth-child(even) {
-  background: #f9fbff;
+  background: var(--color-surface-soft);
 }
 
 #inventario-table-container tbody tr:hover {
-  background: rgba(47, 93, 138, 0.08);
+  background: var(--color-soft-hover);
 }
 
 /* Validaciones */
@@ -204,6 +309,16 @@ div[id$="-errors"] p {
 @media (max-width: 860px) {
   .main-content {
     padding: 1rem;
+    gap: 0.8rem;
+  }
+
+  .main-content > section,
+  .main-content > form {
+    width: 100%;
+  }
+
+  .table-pro {
+    min-width: 620px;
   }
 
   .main-content__grid {
