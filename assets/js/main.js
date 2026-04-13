@@ -1,4 +1,10 @@
-// index.js
+import {
+  renderInventarioSection,
+  renderMovimientosSection,
+  renderAuditoriaSection,
+  renderAdministracionSection,
+} from "./index.js";
+
 // Punto de entrada del frontend - Sistema de Inventario
 
 // Función para inicializar la aplicación
@@ -19,7 +25,7 @@ function renderWelcome() {
 // Configura la navegación básica
 function setupNavigation() {
   const navLinks = document.querySelectorAll(".nav a");
-  navLinks.forEach(link => {
+  navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       const section = event.target.textContent;
@@ -34,33 +40,16 @@ function renderSection(section) {
 
   switch (section) {
     case "Inventario":
-      content.innerHTML = `
-        <h2>Inventario</h2>
-        <p>Administra productos y categorías en un solo módulo para mantener control centralizado del stock.</p>
-      `;
+      renderInventarioSection(content);
       break;
     case "Movimientos":
-      content.innerHTML = `
-        <h2>Movimientos</h2>
-        <p>Registra entradas, salidas y ajustes para conservar trazabilidad diaria del inventario.</p>
-      `;
+      renderMovimientosSection(content);
       break;
     case "Auditoría":
-      content.innerHTML = `
-        <h2>Auditoría</h2>
-        <p>Consulta el historial de acciones internas para seguimiento y control administrativo.</p>
-      `;
+      renderAuditoriaSection(content);
       break;
     case "Administración":
-      content.innerHTML = `
-        <h2>Administración de usuarios</h2>
-        <p>Desde este módulo puedes crear, editar y gestionar usuarios del sistema interno.</p>
-        <ul>
-          <li>Registrar nuevos usuarios administrativos.</li>
-          <li>Actualizar roles y permisos.</li>
-          <li>Activar o desactivar accesos.</li>
-        </ul>
-      `;
+      renderAdministracionSection(content);
       break;
     default:
       renderWelcome();
