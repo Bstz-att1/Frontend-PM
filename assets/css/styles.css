@@ -411,6 +411,92 @@ div[id$="-errors"] p {
   margin-bottom: 0.55rem;
 }
 
+/* Inventario - filtros y listado de productos */
+#inventario-filtros,
+#inventario-listado {
+  margin-top: 1rem;
+  border: 1px solid #d8e3f1;
+  border-radius: var(--radio-base);
+  padding: 1rem 1.05rem;
+  background: linear-gradient(180deg, #ffffff 0%, #f6faff 100%);
+  box-shadow: 0 10px 20px rgba(31, 42, 55, 0.08);
+}
+
+#inventario-filtros h3,
+#inventario-listado h3 {
+  margin-top: 0;
+  margin-bottom: 0.7rem;
+  color: var(--color-primario);
+}
+
+#inventario-filtros label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+  color: var(--color-texto);
+}
+
+#inventario-filtros input,
+#inventario-filtros select {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 0.85rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  background-color: #fff;
+  color: var(--color-texto);
+  font: inherit;
+  transition: var(--transicion-base);
+}
+
+#inventario-filtros input:focus,
+#inventario-filtros select:focus {
+  outline: none;
+  border-color: var(--color-info);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+#inventario-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+#inventario-table-container table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+  background-color: #fff;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-sm);
+  overflow: hidden;
+}
+
+#inventario-table-container thead th {
+  text-align: left;
+  padding: 0.75rem 0.7rem;
+  background: linear-gradient(180deg, #2f5d8a 0%, #244a6d 100%);
+  color: var(--color-texto-sobre-primario);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.2px;
+}
+
+#inventario-table-container tbody td {
+  padding: 0.7rem;
+  border-top: 1px solid var(--color-borde);
+  color: var(--color-texto);
+  vertical-align: top;
+}
+
+#inventario-table-container tbody tr:nth-child(even) {
+  background-color: #f9fbff;
+}
+
+#inventario-table-container tbody tr:hover {
+  background-color: rgba(47, 93, 138, 0.08);
+}
+
 .sidebar ul,
 .content ul {
   padding-left: 1.1rem;
@@ -467,6 +553,15 @@ div[id$="-errors"] p {
   .institucional-grid,
   .testimonios-grid {
     grid-template-columns: 1fr;
+  }
+
+  #inventario-filtros,
+  #inventario-listado {
+    padding: 0.9rem;
+  }
+
+  #inventario-table-container table {
+    min-width: 640px;
   }
 
   .header {
