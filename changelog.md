@@ -672,3 +672,74 @@ Se agregó reporte de auditoría para visualizar productos creados por usuario.
 
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
+
+---
+
+### 🧱 Arquitectura CSS por componentes con BEM (iteración más reciente)
+
+#### `index.html`
+Se migró la estructura de clases hacia convención BEM para mejorar mantenibilidad y escalabilidad visual.
+
+- Header:
+  - `header` → `site-header`
+  - `brand` → `site-header__brand`
+  - `brand-logo` → `site-header__logo`
+  - `brand-text` → `site-header__title`
+  - `header-actions` → `site-header__actions`
+  - `nav`/`ul`/`a` → `site-header__nav`, `site-header__menu`, `site-header__menu-link`
+  - `session-actions` → `site-header__session-actions`
+- Layout principal:
+  - `main-layout main-container` → `layout layout--main`
+- Sidebar:
+  - `sidebar card` → `sidebar sidebar--card`
+  - título/lista/enlaces migrados a `sidebar__title`, `sidebar__menu`, `sidebar__item`, `sidebar__link`
+- Contenido principal:
+  - `content card` → `main-content main-content--card`
+- Footer:
+  - `footer` → `site-footer`
+  - párrafo a `site-footer__text`
+- `<body>` actualizado a clase base `app`.
+
+#### Nueva estructura CSS por bloques
+Se separó el CSS en archivos por componente siguiendo arquitectura modular.
+
+- `assets/css/base.css`
+  - Tokens globales (`:root`), reset, tipografía, fondos, layout principal y breakpoints base.
+- `assets/css/header.css`
+  - Estilos del bloque `site-header` y elementos de navegación/sesión.
+- `assets/css/sidebar.css`
+  - Estilos del bloque `sidebar` y sus elementos BEM.
+- `assets/css/content.css`
+  - Estilos del bloque `main-content`, formularios, tarjetas y secciones de inventario/tabla.
+- `assets/css/footer.css`
+  - Estilos del bloque `site-footer`.
+
+#### `assets/css/styles.css`
+Se convirtió en archivo de agregación/compatibilidad usando imports:
+
+- `@import url('/assets/css/base.css');`
+- `@import url('/assets/css/header.css');`
+- `@import url('/assets/css/sidebar.css');`
+- `@import url('/assets/css/content.css');`
+- `@import url('/assets/css/footer.css');`
+
+#### Corrección funcional derivada de la migración BEM
+
+##### `assets/js/main.js`
+Se ajustaron selectores para que el render dinámico (incluyendo login) funcione con las nuevas clases BEM:
+
+- `.content` → `.main-content` en:
+  - `getContentElement()`
+  - `renderWelcome()`
+  - `renderSection()`
+  - `renderMovimientosByTipo()`
+- `.nav a` → `.site-header__menu-link`
+- `.sidebar a` → `.sidebar__link`
+- `.header` → `.site-header`
+- `.nav` (referencia interna en header) → `.site-header__nav`
+
+#### Resultado de la iteración
+- UI más moderna, dinámica y profesional.
+- CSS desacoplado por componentes (arquitectura escalable).
+- Convención BEM aplicada en estructura principal.
+- Flujo de login/render restablecido tras alinear selectores JS con el nuevo HTML.
