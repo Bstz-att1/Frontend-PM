@@ -545,5 +545,95 @@ Se añadieron estilos coherentes con el tema para sesión/logout (sin estilos in
 
 ---
 
+### 📦 Módulo de Productos en Inventario (iteración reciente)
+
+#### `assets/js/inventario.js`
+Se amplió el módulo para cubrir el flujo completo solicitado de productos con categoría obligatoria, trazabilidad de creador, inventario listado y filtros.
+
+#### Cambios funcionales principales
+- **Categoría obligatoria al crear producto**
+  - El campo categoría del formulario de producto cambió de `input` a `select`.
+  - El `select` se alimenta dinámicamente desde el arreglo de categorías.
+  - Se valida que la categoría exista en el listado permitido.
+- **Registro automático de usuario creador**
+  - Se añade la función `getSessionUser()` para resolver el usuario actual desde almacenamiento local:
+    - `localStorage.sessionUser`
+    - `localStorage.currentUser`
+    - `localStorage.username`
+  - Incluye soporte para valores tipo string u objeto serializado.
+  - Fallback:
+    - `"Usuario no identificado"`
+- **Listado de inventario completo**
+  - Se incorpora estado en memoria `productos`.
+  - Al registrar un producto válido, se guarda con estructura:
+    - `nombre`
+    - `categoria`
+    - `cantidadInicial`
+    - `proveedor`
+    - `creadoPor`
+    - `fechaCreacion`
+  - Se renderiza una tabla dinámica con el inventario completo.
+- **Filtros de búsqueda por nombre y categoría**
+  - Nueva sección de filtros:
+    - `#filtro-nombre` (texto)
+    - `#filtro-categoria` (select)
+  - Se implementa `applyFilters()` para filtrar en tiempo real por:
+    - coincidencia parcial en nombre
+    - coincidencia exacta de categoría
+  - El filtrado combinado actualiza la tabla sin recargar.
+- **Sincronización de categorías en UI**
+  - `renderCategoriaOptions()` actualiza opciones tanto en:
+    - selector de categoría del formulario de producto
+    - selector de categoría del filtro
+  - Al crear categoría nueva, se refresca inmediatamente el listado y filtros.
+
+#### Validaciones mantenidas/ajustadas
+- Producto:
+  - nombre obligatorio y solo texto
+  - categoría obligatoria y válida del catálogo
+  - cantidad inicial > 0
+  - proveedor obligatorio y solo texto
+- Categorías:
+  - obligatorio
+  - solo texto
+  - no duplicados
+
+---
+
+### 🎨 Estilos para cambios del módulo de Productos (iteración reciente)
+
+#### `assets/css/styles.css`
+Se añadieron estilos específicos para las nuevas secciones de Inventario, conservando la línea visual del sistema.
+
+#### Nuevos bloques estilizados
+- `#inventario-filtros`
+- `#inventario-listado`
+
+Ambos con:
+- borde y radio coherentes con tarjetas del sistema
+- fondo degradado suave
+- sombra sutil
+- espaciado uniforme
+
+#### Filtros de búsqueda
+- Estilos para labels, `input` y `select` en `#inventario-filtros`.
+- Estados `:focus` con realce accesible.
+
+#### Tabla de inventario completo
+- Contenedor con scroll horizontal:
+  - `#inventario-table-container { overflow-x: auto; }`
+- Tabla con:
+  - encabezado con gradiente de marca
+  - celdas con bordes suaves
+  - zebra rows (`nth-child(even)`)
+  - hover en filas para facilitar lectura
+
+#### Responsive
+- En `@media (max-width: 860px)`:
+  - se ajusta padding de secciones nuevas
+  - se reduce `min-width` de la tabla para mejorar visualización en móvil
+
+---
+
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
