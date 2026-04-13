@@ -1,6 +1,7 @@
 export function renderInventarioSection(content) {
   const categorias = ["cocina", "barra", "suministros"];
-  const productos = [];
+  const PRODUCTOS_STORAGE_KEY = "inventarioProductos";
+  const productos = loadProductos();
 
   content.innerHTML = `
     <h2>Inventario</h2>
@@ -127,6 +128,25 @@ export function renderInventarioSection(content) {
     }
 
     return "Usuario no identificado";
+  }
+
+  function loadProductos() {
+    try {
+      const raw = localStorage.getItem(PRODUCTOS_STORAGE_KEY);
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveProductos() {
+    try {
+      localStorage.setItem(PRODUCTOS_STORAGE_KEY, JSON.stringify(productos));
+    } catch {
+      // Ignorar errores de almacenamiento para no romper la UI
+    }
   }
 
   function renderCategoriasList() {
@@ -283,6 +303,7 @@ export function renderInventarioSection(content) {
     };
 
     productos.push(nuevoProducto);
+    saveProductos();
     renderErrors(errorsContainer, []);
     form.reset();
     applyFilters();
