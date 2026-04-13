@@ -6,9 +6,12 @@ export function renderAuditoriaSection(content) {
     <h2>Auditoría</h2>
     <p>Consulta el historial de acciones internas para seguimiento y control administrativo.</p>
 
-    <section id="auditoria-reporte-productos" aria-labelledby="auditoria-reporte-title">
+    <section id="auditoria-reporte-productos" class="panel-card" aria-labelledby="auditoria-reporte-title">
       <h3 id="auditoria-reporte-title">Productos creados por cada usuario</h3>
-      <div id="auditoria-productos-por-usuario"></div>
+      <div class="auditoria-grid">
+        <div id="auditoria-resumen-usuarios"></div>
+        <div id="auditoria-productos-por-usuario"></div>
+      </div>
     </section>
 
     <form id="auditoria-form" novalidate>
@@ -26,7 +29,9 @@ export function renderAuditoriaSection(content) {
     </form>
   `;
 
+  const resumenUsuariosContainer = content.querySelector("#auditoria-resumen-usuarios");
   const productosPorUsuarioContainer = content.querySelector("#auditoria-productos-por-usuario");
+  renderResumenPorUsuario(resumenUsuariosContainer, productosPorUsuario);
   renderProductosPorUsuario(productosPorUsuarioContainer, productosPorUsuario);
 
   const form = content.querySelector("#auditoria-form");
@@ -91,6 +96,41 @@ function agruparProductosPorUsuario(productos) {
   }, {});
 }
 
+function renderResumenPorUsuario(container, productosPorUsuario) {
+  const usuarios = Object.keys(productosPorUsuario);
+
+  if (usuarios.length === 0) {
+    container.innerHTML = `<p>No hay totales por usuario para mostrar.</p>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="table-wrapper" role="region" aria-label="Resumen de productos por usuario">
+      <table class="table-pro">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Total de productos</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${usuarios
+            .map((usuario) => {
+              const total = (productosPorUsuario[usuario] || []).length;
+              return `
+                <tr>
+                  <td>${usuario}</td>
+                  <td>${total}</td>
+                </tr>
+              `;
+            })
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
 function renderProductosPorUsuario(container, productosPorUsuario) {
   const usuarios = Object.keys(productosPorUsuario);
 
@@ -104,20 +144,33 @@ function renderProductosPorUsuario(container, productosPorUsuario) {
       .map((usuario) => {
         const productos = productosPorUsuario[usuario] || [];
         return `
-          <article class="auditoria-usuario-card">
+          <article class="auditoria-usuario-card panel-card">
             <h4>${usuario}</h4>
             <p>Total de productos creados: <strong>${productos.length}</strong></p>
-            <ul>
-              ${productos
-                .map(
-                  (producto) => `
-                    <li>
-                      ${producto.nombre || "Producto sin nombre"} · Categoría: ${producto.categoria || "No definida"} · Fecha: ${producto.fechaCreacion || "Sin fecha"}
-                    </li>
-                  `
-                )
-                .join("")}
-            </ul>
+            <div class="table-wrapper" role="region" aria-label="Productos de ${usuario}">
+              <table class="table-pro">
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th>Categoría</th>
+                    <th>Fecha de creación</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${productos
+                    .map(
+                      (producto) => `
+                        <tr>
+                          <td>${producto.nombre || "Producto sin nombre"}</td>
+                          <td>${producto.categoria || "No definida"}</td>
+                          <td>${producto.fechaCreacion || "Sin fecha"}</td>
+                        </tr>
+                      `
+                    )
+                    .join("")}
+                </tbody>
+              </table>
+            </div>
           </article>
         `;
       })
