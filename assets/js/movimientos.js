@@ -1,4 +1,4 @@
-export function renderMovimientosSection(content) {
+export function renderMovimientosSection(content, options = {}) {
   content.innerHTML = `
     <h2>Movimientos</h2>
     <p>Registra entradas, salidas y ajustes para conservar trazabilidad diaria del inventario.</p>
@@ -27,6 +27,10 @@ export function renderMovimientosSection(content) {
 
   const form = content.querySelector("#movimientos-form");
   const errorsContainer = content.querySelector("#movimientos-errors");
+
+  if (options.defaultTipo) {
+    form.tipoMovimiento.value = options.defaultTipo;
+  }
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
