@@ -1,0 +1,100 @@
+/* Variables globales para colores y tipografía */
+:root {
+  /* Paleta principal (uso interno inventario) */
+  --color-primario: #2F5D8A;
+  --color-primario-hover: #244A6D;
+  --color-secundario: #4C8C7A;
+
+  /* Base visual */
+  --color-fondo: #F7F9FC;
+  --color-superficie: #FFFFFF;
+  --color-borde: #D9E1EC;
+
+  /* Texto */
+  --color-texto: #1F2A37;
+  --color-texto-secundario: #4B5563;
+  --color-texto-tenue: #6B7280;
+  --color-texto-sobre-primario: #FFFFFF;
+
+  /* Estados */
+  --color-exito: #2E7D32;
+  --color-advertencia: #D97706;
+  --color-error: #C62828;
+  --color-info: #2563EB;
+
+  --fuente-base: 'Segoe UI', Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  font-family: var(--fuente-base);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  line-height: 1.5;
+}
+
+/* Cabecera */
+.header {
+  background-color: var(--color-primario);
+  color: var(--color-texto-sobre-primario);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h1 {
+  margin: 0;
+}
+
+/* Navegación */
+.nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.nav a {
+  color: var(--color-texto-sobre-primario);
+  text-decoration: none;
+}
+
+.nav a:hover {
+  text-decoration: underline;
+  opacity: 0.95;
+}
+
+/* Layout principal con Grid */
+.main-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  min-height: calc(100vh - 100px); /* resta header y footer */
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--color-superficie);
+  color: var(--color-texto);
+  padding: 1rem;
+  border-right: 1px solid var(--color-borde);
+}
+
+.sidebar h2 {
+  margin-top: 0;
+}
+
+/* Contenido */
+.content {
+  padding: 2rem;
+  background-color: var(--color-superficie);
+}
+
+/* Footer */
+.footer {
+  background-color: var(--color-primario);
+  color: var(--color-texto-sobre-primario);
+  text-align: center;
+  padding: 1rem;
+}
