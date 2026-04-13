@@ -12,7 +12,7 @@ import { setupSidebarNavigation } from "./sidebar.js";
 // Punto de entrada del frontend - Sistema de Inventario
 
 function getContentElement() {
-  return document.querySelector(".content");
+  return document.querySelector(".main-content");
 }
 
 function isAuthenticated() {
@@ -20,8 +20,8 @@ function isAuthenticated() {
 }
 
 function setNavigationEnabled(enabled) {
-  const navLinks = document.querySelectorAll(".nav a");
-  const sidebarLinks = document.querySelectorAll(".sidebar a");
+  const navLinks = document.querySelectorAll(".site-header__menu-link");
+  const sidebarLinks = document.querySelectorAll(".sidebar__link");
 
   [...navLinks, ...sidebarLinks].forEach((link) => {
     link.style.pointerEvents = enabled ? "auto" : "none";
@@ -30,7 +30,7 @@ function setNavigationEnabled(enabled) {
 }
 
 function ensureLogoutButton() {
-  const header = document.querySelector(".header");
+  const header = document.querySelector(".site-header");
   if (!header) return;
 
   let button = header.querySelector("#logout-btn");
@@ -60,7 +60,7 @@ function ensureLogoutButton() {
     return;
   }
 
-  const nav = header.querySelector(".nav");
+  const nav = header.querySelector(".site-header__nav");
   header.insertBefore(button, nav);
 }
 
@@ -92,7 +92,7 @@ function initApp() {
 
 // Renderiza la vista de bienvenida
 function renderWelcome() {
-  const content = document.querySelector(".content");
+  const content = document.querySelector(".main-content");
   content.innerHTML = `
     <h2>Panel operativo diario</h2>
     <p>Selecciona una opción del menú para gestionar el inventario interno con tranquilidad y orden.</p>
@@ -157,7 +157,7 @@ function renderWelcome() {
 
 // Configura la navegación básica
 function setupNavigation() {
-  const navLinks = document.querySelectorAll(".nav a");
+  const navLinks = document.querySelectorAll(".site-header__menu-link");
   navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
@@ -169,7 +169,7 @@ function setupNavigation() {
 
 // Renderiza dinámicamente secciones según el menú
 function renderSection(section) {
-  const content = document.querySelector(".content");
+  const content = document.querySelector(".main-content");
 
   switch (section) {
     case "Inventario":
@@ -190,7 +190,7 @@ function renderSection(section) {
 }
 
 function renderMovimientosByTipo(tipo) {
-  const content = document.querySelector(".content");
+  const content = document.querySelector(".main-content");
   renderMovimientosSection(content, { defaultTipo: tipo });
 }
 
