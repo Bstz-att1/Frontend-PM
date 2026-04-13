@@ -189,5 +189,81 @@ Se implementaron formularios funcionales en cada módulo con validaciones de neg
 
 ---
 
+### 🎨 Refinamiento visual de formularios (fase parcial)
+Se añadieron estilos para los nuevos formularios con una apariencia más moderna y elegante, manteniendo el alcance acotado para esta etapa del desarrollo.
+
+#### `assets/css/styles.css`
+- Se agregaron nuevos tokens de interfaz en `:root`:
+  - `--radio-base`
+  - `--radio-sm`
+  - `--sombra-suave`
+  - `--transicion-base`
+- Se incorporó estilo base para formularios en `.content form`:
+  - borde suave
+  - fondo con gradiente ligero
+  - sombra sutil
+  - espaciado consistente
+- Se estilizaron campos y controles:
+  - `input`, `select`, `textarea`
+  - estados de foco accesibles con realce visual
+- Se estilizó el botón de envío:
+  - apariencia primaria
+  - hover y active con microinteracciones
+- Se añadieron estilos para mensajes de validación:
+  - errores (`div[id$="-errors"] ul`)
+  - estado válido (`div[id$="-errors"] p`)
+- Se agregó responsive base (`@media (max-width: 860px)`):
+  - layout de una columna
+  - ajustes de `sidebar`, `header`, `nav` y `content`
+
+#### Alcance de esta fase
+- Se aplicó un refinamiento visual intermedio.
+- No se realizaron aún ajustes de diseño avanzados/finales de UI (pendientes para fases posteriores).
+
+---
+
+### ✨ Ajuste visual moderno y elegante (fase parcial adicional)
+Se aplicó una mejora estética ligera en la interfaz principal para lograr una apariencia más moderna y profesional, manteniendo el alcance acotado mientras continúa el desarrollo.
+
+#### `index.html`
+- Se añadieron clases estructurales para habilitar el nuevo estilo sin cambiar la lógica:
+  - `<main class="main-layout main-container">`
+  - `<aside class="sidebar card">`
+  - `<section class="content card">`
+- Se añadieron clases visuales a los bloques informativos:
+  - `<article class="panel-card">` en:
+    - Resumen del día
+    - Accesos rápidos
+    - Estado operativo
+
+#### `assets/css/styles.css`
+- Se refinaron tokens visuales:
+  - `--radio-base` y `--radio-sm` con bordes más suaves.
+  - Nuevo token `--sombra-media`.
+- Header modernizado:
+  - gradiente sutil (`linear-gradient`)
+  - mejor jerarquía tipográfica en título
+  - sombra para mayor profundidad visual.
+- Navegación mejorada:
+  - enlaces tipo “pill”
+  - hover más limpio con fondo translúcido.
+- Layout principal más elegante:
+  - columna lateral un poco más amplia
+  - `gap` entre paneles
+  - contenedor centrado con `max-width` mediante `.main-container`.
+- Tarjetas visuales:
+  - `.card` para contenedores principales.
+  - `.panel-card` para artículos de contenido con borde, radio, fondo suave y sombra.
+- Limpieza de listas/enlaces:
+  - mejor espaciado de listas (`padding-left`)
+  - enlaces de sidebar/contenido con transición y hover consistente.
+- Se mantiene responsive base sin cerrar aún el diseño final.
+
+#### Alcance de esta iteración
+- Mejora visual intermedia (moderna/elegante) aplicada.
+- No corresponde todavía a la versión final de UI/UX del sistema.
+
+---
+
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
