@@ -4,41 +4,46 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sistema de Gestión de Inventario</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="/assets/css/styles.css">
 </head>
-<body>
-  <header class="header">
-    <h1>Sistema de Inventario</h1>
-    <nav class="nav">
-      <ul>
-        <li><a href="#">Usuarios</a></li>
-        <li><a href="#">Categorías</a></li>
-        <li><a href="#">Productos</a></li>
-        <li><a href="#">Auditoría</a></li>
-      </ul>
-    </nav>
+<body class="app">
+  <header class="site-header">
+    <div class="site-header__brand">
+      <img class="site-header__logo" src="assets/img/Gemini_Generated_Image_717eyy717eyy717e.png" alt="Logo de El Rincón Gastronómico">
+      <h1 class="site-header__title">Gestión Interna de Inventario</h1>
+    </div>
+    <div class="site-header__actions">
+      <nav class="site-header__nav" aria-label="Navegación principal administrativa">
+        <ul class="site-header__menu">
+          <li class="site-header__menu-item"><a class="site-header__menu-link" href="#">Inventario</a></li>
+          <li class="site-header__menu-item"><a class="site-header__menu-link" href="#">Movimientos</a></li>
+          <li class="site-header__menu-item"><a class="site-header__menu-link" href="#">Auditoría</a></li>
+          <li class="site-header__menu-item"><a class="site-header__menu-link" href="#">Administración</a></li>
+        </ul>
+      </nav>
+      <div class="site-header__session-actions" id="session-actions"></div>
+    </div>
   </header>
 
-  <main class="main-layout">
-    <aside class="sidebar">
-      <h2>Menú</h2>
-      <ul>
-        <li><a href="#">Inicio</a></li>
-        <li><a href="#">Reportes</a></li>
+  <main class="layout layout--main">
+    <aside class="sidebar sidebar--card">
+      <h2 class="sidebar__title">Menú interno</h2>
+      <ul class="sidebar__menu">
+        <li class="sidebar__item"><a class="sidebar__link" href="#">Panel principal</a></li>
+        <li class="sidebar__item"><a class="sidebar__link" href="#">Entradas de stock</a></li>
+        <li class="sidebar__item"><a class="sidebar__link" href="#">Salidas de stock</a></li>
+        <li class="sidebar__item"><a class="sidebar__link" href="#">Ajustes de inventario</a></li>
+        <li class="sidebar__item"><a class="sidebar__link" href="#">Reportes</a></li>
       </ul>
     </aside>
 
-    <section class="content">
-      <!-- Aquí se inyectará dinámicamente el contenido con JS -->
-      <h2>Bienvenido</h2>
-      <p>Seleccione una opción del menú para comenzar.</p>
-    </section>
+    <section class="main-content main-content--card"></section>
   </main>
 
-  <footer class="footer">
-    <p>&copy; 2026 El Rincón Gastronómico - Sistema de Inventario</p>
+  <footer class="site-footer">
+    <p class="site-footer__text">&copy; 2026 El Rincón Gastronómico - Sistema de Inventario</p>
   </footer>
 
-  <script src="main.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

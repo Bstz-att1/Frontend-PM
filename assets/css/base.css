@@ -1,0 +1,105 @@
+:root {
+  --color-primary: #2f5d8a;
+  --color-primary-strong: #244a6d;
+  --color-secondary: #4c8c7a;
+  --color-accent: #2563eb;
+
+  --color-bg: #f4f7fc;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f8fbff;
+  --color-border: #d8e3f1;
+  --color-surface-alt: #fbfcff;
+  --color-soft-hover: rgba(47, 93, 138, 0.08);
+  --color-overlay-soft: rgba(37, 99, 235, 0.15);
+
+  --color-text: #1f2a37;
+  --color-text-muted: #4b5563;
+  --color-text-soft: #6b7280;
+  --color-on-primary: #ffffff;
+
+  --color-success: #2e7d32;
+  --color-warning: #d97706;
+  --color-danger: #c62828;
+
+  --font-base: 'Segoe UI', Arial, sans-serif;
+
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 8px 20px rgba(31, 42, 55, 0.08);
+  --shadow-md: 0 14px 30px rgba(31, 42, 55, 0.12);
+
+  --transition-base: all 0.24s ease;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] {
+  --color-primary: #4f8dc8;
+  --color-primary-strong: #3b6f9f;
+  --color-secondary: #5aa893;
+  --color-accent: #60a5fa;
+
+  --color-bg: #0f1722;
+  --color-surface: #172230;
+  --color-surface-soft: #1d2b3c;
+  --color-border: #2f435b;
+  --color-surface-alt: #223247;
+  --color-soft-hover: rgba(96, 165, 250, 0.18);
+  --color-overlay-soft: rgba(96, 165, 250, 0.24);
+
+  --color-text: #e6edf7;
+  --color-text-muted: #bfccdd;
+  --color-text-soft: #9fb2ca;
+  --color-on-primary: #f8fbff;
+
+  --color-success: #7ad38a;
+  --color-warning: #f6b85f;
+  --color-danger: #ef7f7f;
+
+  --shadow-sm: 0 8px 20px rgba(5, 10, 18, 0.4);
+  --shadow-md: 0 14px 30px rgba(5, 10, 18, 0.5);
+}
+
+body.app {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-base);
+  color: var(--color-text);
+  line-height: 1.5;
+  background:
+    radial-gradient(circle at 10% 8%, rgba(76, 140, 122, 0.15), transparent 30%),
+    radial-gradient(circle at 88% 12%, rgba(37, 99, 235, 0.12), transparent 34%),
+    var(--color-bg);
+}
+
+.layout.layout--main {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 1.1rem auto;
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 1.1rem;
+  min-height: calc(100vh - 122px);
+}
+
+.main-content--card,
+.sidebar--card {
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+a {
+  color: inherit;
+}
+
+@media (max-width: 860px) {
+  .layout.layout--main {
+    grid-template-columns: 1fr;
+    gap: 0.95rem;
+  }
+}
