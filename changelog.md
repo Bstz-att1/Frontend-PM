@@ -265,5 +265,103 @@ Se aplicó una mejora estética ligera en la interfaz principal para lograr una 
 
 ---
 
+### 🔄 Ajustes de bienvenida institucional y render dinámico (iteración reciente)
+
+#### `index.html`
+- Se simplificó la sección principal para evitar duplicación con el render dinámico:
+  - Antes: la sección `.content` contenía contenido estático completo (panel + institucional + tarjetas).
+  - Ahora: se deja como contenedor base:
+    - `<section class="content card"></section>`
+- Motivo:
+  - `assets/js/main.js` reescribe `.content` al iniciar, por lo que mantener contenido estático generaba redundancia e inconsistencias.
+
+#### `assets/js/main.js`
+- Se actualizó `renderWelcome()` para que renderice de forma dinámica toda la vista inicial:
+  - `Panel operativo diario`
+  - Mensaje guía de operación
+  - Sección institucional:
+    - Introducción
+    - Objetivo de la empresa
+    - Visión
+    - Opiniones de clientes
+- Se actualizó el texto de **Objetivo de la empresa** con el nuevo contenido institucional proporcionado por el usuario:
+  - Enfoque en experiencia gastronómica, calidad constante, servicio amable, higiene, ambiente acogedor, relación calidad/precio, conexión emocional, identidad e ingredientes frescos/locales.
+- Se amplió la sección de testimonios con más reseñas y nombres simulados:
+  - Laura Méndez
+  - Carlos Ríos
+  - Andrea Salazar
+  - Felipe Montoya
+  - Daniela Pardo
+  - Julián Herrera
+
+---
+
+### 🎨 Ajuste visual de mayor vividez (iteración reciente)
+
+#### `assets/css/styles.css`
+Se aplicó una mejora visual enfocada en dar más vida al sistema, especialmente en bienvenida, menú interno y tarjetas:
+
+- `body`:
+  - Se añadieron fondos con gradientes radiales suaves para mayor profundidad visual.
+- `.sidebar`:
+  - Fondo degradado más limpio.
+  - Borde refinado.
+  - Acento superior con gradiente (`::before`).
+  - Título más destacado.
+  - Lista sin viñetas y mejor separación entre items.
+- `.sidebar a`:
+  - Estilo tipo píldora con hover más visible y amigable.
+- `.institucional-intro`:
+  - Borde/sombra mejorados.
+  - Decoración visual con pseudo-elemento `::after`.
+  - Apariencia más protagonista en la vista de bienvenida.
+- `.institucional-card`:
+  - Nuevo fondo degradado.
+  - Sombra suave y microinteracción hover (elevación).
+- `.testimonio-card`:
+  - Acento lateral reforzado.
+  - Fondo más cálido y sombra con color.
+  - Hover ligero para dinamismo.
+- `.panel-card`:
+  - Borde, fondo y sombras más vivos.
+  - Efecto hover coherente con el resto de tarjetas.
+- Responsive:
+  - Se mantiene comportamiento a una columna para grids institucionales y testimonios en `@media (max-width: 860px)`.
+
+---
+
+### 🖼️ Integración de logo institucional en encabezado (iteración reciente)
+
+#### `index.html`
+- Se actualizó el encabezado para incluir branding visual junto al título.
+- Antes:
+  - `<h1>Gestión Interna de Inventario</h1>`
+- Ahora:
+  - Contenedor de marca:
+    - `<div class="brand">`
+    - `<img class="brand-logo" src="assets/img/Gemini_Generated_Image_717eyy717eyy717e.png" alt="Logo de El Rincón Gastronómico">`
+    - `<h1 class="brand-text">Gestión Interna de Inventario</h1>`
+- Objetivo:
+  - Reforzar identidad institucional y presencia de marca dentro del sistema.
+
+#### `assets/css/styles.css`
+- Se añadieron estilos para los nuevos elementos del encabezado:
+  - `.brand`:
+    - alineación horizontal del logo y texto
+    - separación consistente
+  - `.brand-logo`:
+    - tamaño fijo
+    - bordes redondeados
+    - `object-fit: cover`
+    - sombra para mejorar visibilidad sobre el header
+  - `.brand-text`:
+    - tipografía ajustada para conservar jerarquía del título
+- Responsive (`@media (max-width: 860px)`):
+  - ajuste de ancho del bloque `.brand`
+  - reducción de tamaño del logo
+  - `brand-text` permite salto de línea para mejorar lectura en móvil
+
+---
+
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
