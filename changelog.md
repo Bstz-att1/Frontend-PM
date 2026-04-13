@@ -340,7 +340,15 @@ Se aplicó una mejora visual enfocada en dar más vida al sistema, especialmente
   - Contenedor de marca:
     - `<div class="brand">`
     - `<img class="brand-logo" src="assets/img/Gemini_Generated_Image_717eyy717eyy717e.png" alt="Logo de El Rincón Gastronómico">`
-    - `<h1 class="brand-text">Gestión Interna de Inventario</h1>`
+    - `<h
+
+#### `assets/js/inventario.js`
+Se amplió el módulo de Inventario para incluir gestión básica de categorías en la interfaz, manteniendo el formulario de productos como flujo principal.
+
+#### Cambios funcionales
+- Se añadieron categorías iniciales en memoria:
+  - `cocina`
+  - `barra`1 class="brand-text">Gestión Interna de Inventario</h1>`
 - Objetivo:
   - Reforzar identidad institucional y presencia de marca dentro del sistema.
 
@@ -503,5 +511,291 @@ Se añadieron estilos coherentes con el tema para sesión/logout (sin estilos in
 
 ---
 
+### 🧩 Módulo de Categorías dentro de Inventario (iteración reciente)
+  - `suministros`
+- Se incorporó una nueva sección `Categorías` con:
+  - Formulario de creación (`#categoria-form`)
+  - Campo `Nueva categoría` (`categoriaNombre`)
+  - Botón `Crear categoría`
+  - Contenedor de mensajes (`#categoria-messages`)
+  - Listado dinámico (`#categorias-list`)
+- Se implementó renderizado dinámico del listado de categorías mediante `renderCategoriasList()`.
+
+#### Validaciones de creación de categoría
+- Campo obligatorio:
+  - `"El nombre de la categoría es requerido."`
+- Solo texto:
+  - `"La categoría debe contener solo texto."`
+- Sin duplicados:
+  - `"La categoría ya existe en el listado."`
+- Normalización previa para consistencia:
+  - `trim`
+  - `toLowerCase`
+  - compactación de espacios múltiples.
+
+#### Mensajería y UX
+- En error: se muestran mensajes en lista dentro de `#categoria-messages`.
+- En éxito: se muestra
+  - `"Categoría creada correctamente."`
+- Se limpia el formulario tras creación válida y se actualiza inmediatamente el listado.
+
+#### Reorganización solicitada
+- Se ajustó el orden visual para que **Crear producto** (`#inventario-form`) aparezca primero.
+- La sección **Categorías** queda después del formulario principal, sin afectar validaciones existentes del módulo Inventario.
+
+---
+
+### 📦 Módulo de Productos en Inventario (iteración reciente)
+
+#### `assets/js/inventario.js`
+Se amplió el módulo para cubrir el flujo completo solicitado de productos con categoría obligatoria, trazabilidad de creador, inventario listado y filtros.
+
+#### Cambios funcionales principales
+- **Categoría obligatoria al crear producto**
+  - El campo categoría del formulario de producto cambió de `input` a `select`.
+  - El `select` se alimenta dinámicamente desde el arreglo de categorías.
+  - Se valida que la categoría exista en el listado permitido.
+- **Registro automático de usuario creador**
+  - Se añade la función `getSessionUser()` para resolver el usuario actual desde almacenamiento local:
+    - `localStorage.sessionUser`
+    - `localStorage.currentUser`
+    - `localStorage.username`
+  - Incluye soporte para valores tipo string u objeto serializado.
+  - Fallback:
+    - `"Usuario no identificado"`
+- **Listado de inventario completo**
+  - Se incorpora estado en memoria `productos`.
+  - Al registrar un producto válido, se guarda con estructura:
+    - `nombre`
+    - `categoria`
+    - `cantidadInicial`
+    - `proveedor`
+    - `creadoPor`
+    - `fechaCreacion`
+  - Se renderiza una tabla dinámica con el inventario completo.
+- **Filtros de búsqueda por nombre y categoría**
+  - Nueva sección de filtros:
+    - `#filtro-nombre` (texto)
+    - `#filtro-categoria` (select)
+  - Se implementa `applyFilters()` para filtrar en tiempo real por:
+    - coincidencia parcial en nombre
+    - coincidencia exacta de categoría
+  - El filtrado combinado actualiza la tabla sin recargar.
+- **Sincronización de categorías en UI**
+  - `renderCategoriaOptions()` actualiza opciones tanto en:
+    - selector de categoría del formulario de producto
+    - selector de categoría del filtro
+  - Al crear categoría nueva, se refresca inmediatamente el listado y filtros.
+
+#### Validaciones mantenidas/ajustadas
+- Producto:
+  - nombre obligatorio y solo texto
+  - categoría obligatoria y válida del catálogo
+  - cantidad inicial > 0
+  - proveedor obligatorio y solo texto
+- Categorías:
+  - obligatorio
+  - solo texto
+  - no duplicados
+
+---
+
+### 🎨 Estilos para cambios del módulo de Productos (iteración reciente)
+
+#### `assets/css/styles.css`
+Se añadieron estilos específicos para las nuevas secciones de Inventario, conservando la línea visual del sistema.
+
+#### Nuevos bloques estilizados
+- `#inventario-filtros`
+- `#inventario-listado`
+
+Ambos con:
+- borde y radio coherentes con tarjetas del sistema
+- fondo degradado suave
+- sombra sutil
+- espaciado uniforme
+
+#### Filtros de búsqueda
+- Estilos para labels, `input` y `select` en `#inventario-filtros`.
+- Estados `:focus` con realce accesible.
+
+#### Tabla de inventario completo
+- Contenedor con scroll horizontal:
+  - `#inventario-table-container { overflow-x: auto; }`
+- Tabla con:
+  - encabezado con gradiente de marca
+  - celdas con bordes suaves
+  - zebra rows (`nth-child(even)`)
+  - hover en filas para facilitar lectura
+
+#### Responsive
+- En `@media (max-width: 860px)`:
+  - se ajusta padding de secciones nuevas
+  - se reduce `min-width` de la tabla para mejorar visualización en móvil
+
+---
+
+### 🧾 Auditoría: productos creados por cada usuario (iteración reciente)
+
+#### `assets/js/inventario.js`
+Se incorporó persistencia del inventario en almacenamiento local para habilitar consulta transversal desde otros módulos.
+
+- Nuevo almacenamiento:
+  - Clave: `inventarioProductos` en `localStorage`.
+- Comportamiento agregado:
+  - `loadProductos()` carga productos guardados al renderizar Inventario.
+  - `saveProductos()` persiste productos cada vez que se registra uno nuevo.
+- Efecto funcional:
+  - Los productos ya no viven solo en memoria temporal del módulo.
+  - Se conserva trazabilidad (`creadoPor`, `fechaCreacion`) para auditoría.
+
+#### `assets/js/auditoria.js`
+Se agregó reporte de auditoría para visualizar productos creados por usuario.
+
+- Nueva sección de reporte:
+  - Título: **Productos creados por cada usuario**.
+- Flujo implementado:
+  - Lectura de productos desde `localStorage` (`inventarioProductos`).
+  - Agrupación por campo `creadoPor`.
+  - Render por usuario con:
+    - nombre de usuario,
+    - total de productos creados,
+    - listado de productos (nombre, categoría, fecha).
+- Estado sin datos:
+  - Mensaje: `"No hay productos registrados para auditar."`
+
+#### Resultado de negocio
+- Auditoría ahora muestra trazabilidad real de creación de productos por responsable.
+- Se mantiene el formulario de hallazgos existente sin romper su validación.
+
+---
+
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
+
+---
+
+### 🧱 Estructura visual profesional en módulos (iteración más reciente)
+
+#### `assets/css/content.css`
+Se reforzó la estructura global del área principal para unificar presentación, jerarquía visual y tablas dinámicas en los módulos.
+
+- Se mejoró `.main-content` con:
+  - mayor padding
+  - distribución en columna con `gap`
+- Se añadieron reglas globales para centrar y ordenar contenido:
+  - `.main-content > h2` (título principal centrado)
+  - `.main-content > p` (subtítulo centrado con ancho máximo)
+  - `.main-content > section, .main-content > form` (ancho controlado y centrado)
+- Se consolidó estilo reutilizable de módulos:
+  - `.panel-card` y `.panel-card h3`
+- Se añadió sistema profesional para tablas:
+  - `.table-wrapper` (contenedor responsive con scroll horizontal)
+  - `.table-pro` (tabla base reutilizable)
+  - estilos de encabezado, celdas, zebra rows y hover
+- Se añadieron utilidades para listas y distribución:
+  - `.list-clean`
+  - `.auditoria-grid`
+- Se reforzó el comportamiento responsive:
+  - ajuste de `gap` y anchos en móvil
+  - `min-width` de `.table-pro` para mantener legibilidad
+
+#### `assets/js/usuarios.js`
+Se profesionalizó el render del listado dinámico de usuarios.
+
+- `renderUsersTable(container, users)` ahora renderiza:
+  - contenedor semántico `.table-wrapper` con `role="region"` y `aria-label`
+  - tabla con clases `users-table table-pro` para heredar estilo unificado
+- Se actualizó el texto introductorio del módulo para reflejar un enfoque más claro y profesional.
+
+#### `assets/js/auditoria.js`
+Se reorganizó la sección de auditoría para mostrar información más estructurada y fácil de revisar.
+
+- El bloque de reporte se convirtió en tarjeta visual:
+  - `section#auditoria-reporte-productos` ahora usa `class="panel-card"`
+- Se añadió layout de reporte:
+  - `div.auditoria-grid` para separar resumen y detalle
+- `renderResumenPorUsuario(...)`:
+  - pasó de lista simple a tabla profesional (`.table-wrapper` + `.table-pro`)
+  - columnas: Usuario / Total de productos
+- `renderProductosPorUsuario(...)`:
+  - cada usuario ahora se muestra en una `panel-card`
+  - detalle en tabla profesional por usuario con columnas:
+    - Producto
+    - Categoría
+    - Fecha de creación
+
+#### Estado de implementación
+- Cambios visuales y estructurales aplicados en los módulos de Usuarios y Auditoría.
+- Se deja registrado que falta completar la iteración con ajuste final en `assets/js/main.js` y validación visual completa por pruebas.
+
+---
+
+### 🧱 Arquitectura CSS por componentes con BEM (iteración más reciente)
+
+#### `index.html`
+Se migró la estructura de clases hacia convención BEM para mejorar mantenibilidad y escalabilidad visual.
+
+- Header:
+  - `header` → `site-header`
+  - `brand` → `site-header__brand`
+  - `brand-logo` → `site-header__logo`
+  - `brand-text` → `site-header__title`
+  - `header-actions` → `site-header__actions`
+  - `nav`/`ul`/`a` → `site-header__nav`, `site-header__menu`, `site-header__menu-link`
+  - `session-actions` → `site-header__session-actions`
+- Layout principal:
+  - `main-layout main-container` → `layout layout--main`
+- Sidebar:
+  - `sidebar card` → `sidebar sidebar--card`
+  - título/lista/enlaces migrados a `sidebar__title`, `sidebar__menu`, `sidebar__item`, `sidebar__link`
+- Contenido principal:
+  - `content card` → `main-content main-content--card`
+- Footer:
+  - `footer` → `site-footer`
+  - párrafo a `site-footer__text`
+- `<body>` actualizado a clase base `app`.
+
+#### Nueva estructura CSS por bloques
+Se separó el CSS en archivos por componente siguiendo arquitectura modular.
+
+- `assets/css/base.css`
+  - Tokens globales (`:root`), reset, tipografía, fondos, layout principal y breakpoints base.
+- `assets/css/header.css`
+  - Estilos del bloque `site-header` y elementos de navegación/sesión.
+- `assets/css/sidebar.css`
+  - Estilos del bloque `sidebar` y sus elementos BEM.
+- `assets/css/content.css`
+  - Estilos del bloque `main-content`, formularios, tarjetas y secciones de inventario/tabla.
+- `assets/css/footer.css`
+  - Estilos del bloque `site-footer`.
+
+#### `assets/css/styles.css`
+Se convirtió en archivo de agregación/compatibilidad usando imports:
+
+- `@import url('/assets/css/base.css');`
+- `@import url('/assets/css/header.css');`
+- `@import url('/assets/css/sidebar.css');`
+- `@import url('/assets/css/content.css');`
+- `@import url('/assets/css/footer.css');`
+
+#### Corrección funcional derivada de la migración BEM
+
+##### `assets/js/main.js`
+Se ajustaron selectores para que el render dinámico (incluyendo login) funcione con las nuevas clases BEM:
+
+- `.content` → `.main-content` en:
+  - `getContentElement()`
+  - `renderWelcome()`
+  - `renderSection()`
+  - `renderMovimientosByTipo()`
+- `.nav a` → `.site-header__menu-link`
+- `.sidebar a` → `.sidebar__link`
+- `.header` → `.site-header`
+- `.nav` (referencia interna en header) → `.site-header__nav`
+
+#### Resultado de la iteración
+- UI más moderna, dinámica y profesional.
+- CSS desacoplado por componentes (arquitectura escalable).
+- Convención BEM aplicada en estructura principal.
+- Flujo de login/render restablecido tras alinear selectores JS con el nuevo HTML.
