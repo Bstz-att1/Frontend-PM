@@ -340,7 +340,15 @@ Se aplicó una mejora visual enfocada en dar más vida al sistema, especialmente
   - Contenedor de marca:
     - `<div class="brand">`
     - `<img class="brand-logo" src="assets/img/Gemini_Generated_Image_717eyy717eyy717e.png" alt="Logo de El Rincón Gastronómico">`
-    - `<h1 class="brand-text">Gestión Interna de Inventario</h1>`
+    - `<h
+
+#### `assets/js/inventario.js`
+Se amplió el módulo de Inventario para incluir gestión básica de categorías en la interfaz, manteniendo el formulario de productos como flujo principal.
+
+#### Cambios funcionales
+- Se añadieron categorías iniciales en memoria:
+  - `cocina`
+  - `barra`1 class="brand-text">Gestión Interna de Inventario</h1>`
 - Objetivo:
   - Reforzar identidad institucional y presencia de marca dentro del sistema.
 
@@ -500,6 +508,40 @@ Se añadieron estilos coherentes con el tema para sesión/logout (sin estilos in
 - `.logout-btn`
 - Estados `:hover` y `:active`
 - Ajustes responsive para cabecera y distribución de acciones de sesión.
+
+---
+
+### 🧩 Módulo de Categorías dentro de Inventario (iteración reciente)
+  - `suministros`
+- Se incorporó una nueva sección `Categorías` con:
+  - Formulario de creación (`#categoria-form`)
+  - Campo `Nueva categoría` (`categoriaNombre`)
+  - Botón `Crear categoría`
+  - Contenedor de mensajes (`#categoria-messages`)
+  - Listado dinámico (`#categorias-list`)
+- Se implementó renderizado dinámico del listado de categorías mediante `renderCategoriasList()`.
+
+#### Validaciones de creación de categoría
+- Campo obligatorio:
+  - `"El nombre de la categoría es requerido."`
+- Solo texto:
+  - `"La categoría debe contener solo texto."`
+- Sin duplicados:
+  - `"La categoría ya existe en el listado."`
+- Normalización previa para consistencia:
+  - `trim`
+  - `toLowerCase`
+  - compactación de espacios múltiples.
+
+#### Mensajería y UX
+- En error: se muestran mensajes en lista dentro de `#categoria-messages`.
+- En éxito: se muestra
+  - `"Categoría creada correctamente."`
+- Se limpia el formulario tras creación válida y se actualiza inmediatamente el listado.
+
+#### Reorganización solicitada
+- Se ajustó el orden visual para que **Crear producto** (`#inventario-form`) aparezca primero.
+- La sección **Categorías** queda después del formulario principal, sin afectar validaciones existentes del módulo Inventario.
 
 ---
 
