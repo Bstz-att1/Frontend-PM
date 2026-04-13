@@ -108,5 +108,86 @@ Se configuró la carga del script principal con ES Modules para que `main.js` pu
 
 ---
 
+### 🧾 Formularios por módulo y validaciones (Frontend JS)
+Se implementaron formularios funcionales en cada módulo con validaciones de negocio, mensajes específicos y enfoque de trazabilidad operativa.
+
+#### `assets/js/inventario.js`
+- Se reemplazó el contenido estático por formulario:
+  - Campos: `nombre`, `categoría`, `cantidad inicial`, `proveedor`.
+- Validaciones implementadas:
+  - Nombre obligatorio:
+    - `"El nombre del producto es requerido."`
+  - Nombre solo texto:
+    - `"El nombre del producto debe contener solo texto para una identificación clara."`
+  - Categoría obligatoria:
+    - `"Debe ingresar la categoría del producto para clasificar correctamente el inventario."`
+  - Categoría solo texto:
+    - `"La categoría debe contener solo texto para mantener una clasificación legible."`
+  - Cantidad inicial mayor que cero (sin negativos ni 0):
+    - `"La cantidad inicial debe ser mayor que cero."`
+  - Proveedor obligatorio:
+    - `"Debe ingresar el proveedor para mantener trazabilidad del abastecimiento."`
+  - Proveedor solo texto:
+    - `"El proveedor debe contener solo texto para mantener registros consistentes."`
+
+#### `assets/js/movimientos.js`
+- Se reemplazó el contenido estático por formulario:
+  - Campos: `tipo de movimiento`, `producto`, `cantidad`, `motivo`.
+- Validaciones implementadas:
+  - Tipo obligatorio:
+    - `"Debe seleccionar el tipo de movimiento."`
+  - Producto obligatorio:
+    - `"El nombre del producto es requerido."`
+  - Producto solo texto (no números):
+    - `"El producto debe contener solo texto para mantener una identificación clara del movimiento."`
+  - Cantidad positiva (sin negativos ni 0):
+    - `"La cantidad debe ser un número válido mayor que cero."`
+  - Motivo obligatorio:
+    - `"Debe ingresar el motivo del movimiento para conservar trazabilidad operativa."`
+  - Motivo solo texto:
+    - `"El motivo debe contener solo texto para mantener claridad en el registro del movimiento."`
+
+#### `assets/js/auditoria.js`
+- Se reemplazó el contenido estático por formulario:
+  - Campos: `producto`, `hallazgo detectado`, `descripción del hallazgo`.
+- Ajustes de estructura solicitados:
+  - `hallazgo detectado` se cambió a texto (ya no numérico).
+  - `descripción del hallazgo` se mantiene como texto descriptivo.
+- Validaciones implementadas:
+  - Producto obligatorio:
+    - `"Debe indicar el producto auditado para mantener trazabilidad del registro."`
+  - Producto solo texto (no números):
+    - `"El producto debe contener solo texto para mantener una identificación clara en auditoría."`
+  - Hallazgo detectado obligatorio:
+    - `"Debe registrar el hallazgo detectado para sustentar la trazabilidad de la auditoría."`
+  - Hallazgo detectado solo texto (no números):
+    - `"El hallazgo detectado debe contener solo texto para mantener una auditoría clara y trazable."`
+  - Descripción del hallazgo obligatoria:
+    - `"Debe ingresar una descripción del hallazgo para documentar el contexto y asegurar seguimiento."`
+  - Descripción del hallazgo solo texto:
+    - `"La descripción del hallazgo debe contener solo texto para conservar evidencia clara en la auditoría."`
+
+#### `assets/js/administracion.js`
+- Se reemplazó el contenido estático por formulario:
+  - Campos: `nombre`, `correo`, `rol`, `estado`.
+- Validaciones implementadas:
+  - Nombre obligatorio:
+    - `"Debe ingresar el nombre del usuario para identificar correctamente el registro administrativo."`
+  - Nombre solo texto (no números):
+    - `"El nombre debe contener solo texto para mantener una identificación clara del usuario."`
+  - Correo válido:
+    - `"Debe ingresar un correo electrónico válido para garantizar notificaciones, acceso seguro y trazabilidad del usuario."`
+  - Rol obligatorio:
+    - `"Debe asignar un rol al usuario para definir permisos y responsabilidades dentro del sistema."`
+  - Estado obligatorio:
+    - `"Debe definir el estado del usuario para controlar si tendrá acceso activo o inactivo al sistema."`
+
+#### Comportamiento común aplicado
+- En cada formulario se captura el evento `submit`, se previene recarga (`event.preventDefault()`) y se renderizan errores en lista.
+- Se mantiene mensaje de éxito base al no existir errores:
+  - `"Formulario válido."`
+
+---
+
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
