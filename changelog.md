@@ -363,5 +363,50 @@ Se aplicó una mejora visual enfocada en dar más vida al sistema, especialmente
 
 ---
 
+### 🧭 Modularización del sidebar y redirección por acciones (iteración reciente)
+
+#### `assets/js/sidebar.js` (nuevo)
+Se creó un módulo dedicado para encapsular la lógica del menú lateral y mantener separación clara de responsabilidades.
+
+- Exporta:
+  - `setupSidebarNavigation({ onWelcome, onSectionNavigate, onMovimientosNavigate })`
+- Comportamiento implementado:
+  - `Panel principal` → `onWelcome()`
+  - `Entradas de stock` → `onMovimientosNavigate("entrada")`
+  - `Salidas de stock` → `onMovimientosNavigate("salida")`
+  - `Ajustes de inventario` → `onSectionNavigate("Inventario")`
+  - `Reportes` → `onSectionNavigate("Auditoría")`
+- Se centralizó el `click handler` del sidebar usando `.sidebar a` y `event.preventDefault()` para navegación interna por render.
+
+#### `assets/js/main.js`
+Se integró el módulo del sidebar sin afectar el flujo del menú principal.
+
+- Import nuevo:
+  - `import { setupSidebarNavigation } from "./sidebar.js";`
+- `initApp()` ahora inicializa:
+  - `renderWelcome()`
+  - `setupNavigation()` (menú principal)
+  - `setupSidebar()` (menú lateral)
+- Se añadieron funciones de soporte:
+  - `renderMovimientosByTipo(tipo)` para renderizar Movimientos con tipo preseleccionado.
+  - `setupSidebar()` para conectar callbacks del módulo sidebar con la lógica de render existente.
+
+#### `assets/js/movimientos.js`
+Se extendió el render para soportar preselección de tipo de movimiento desde el sidebar.
+
+- Firma actualizada:
+  - `renderMovimientosSection(content, options = {})`
+- Nueva capacidad:
+  - Si `options.defaultTipo` existe, se asigna automáticamente al campo `tipoMovimiento`.
+- Resultado:
+  - Al hacer clic en `Entradas de stock` o `Salidas de stock`, el formulario abre con el tipo correcto ya seleccionado.
+
+#### Impacto funcional
+- Se mantiene intacta la navegación del menú principal.
+- Se habilita navegación del sidebar con redirección interna clara y consistente.
+- Se mejora mantenibilidad al separar la lógica del sidebar en su propio módulo.
+
+---
+
 ### 📝 Archivos de registro
 - Se actualiza este archivo `changelog.md` para registrar los cambios realizados.
