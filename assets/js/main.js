@@ -93,66 +93,101 @@ function initApp() {
 // Renderiza la vista de bienvenida
 function renderWelcome() {
   const content = document.querySelector(".main-content");
-  content.innerHTML = `
-    <h2>Panel operativo diario</h2>
-    <p>Selecciona una opción del menú para gestionar el inventario interno con tranquilidad y orden.</p>
+  content.innerHTML = "";
 
-    <section class="institucional-intro" aria-labelledby="titulo-introduccion-sistema">
-      <h3 id="titulo-introduccion-sistema">Bienvenidos al sistema de gestión interna</h3>
-      <p>
-        Este espacio fue diseñado para apoyar el trabajo diario de cada colaborador de El Rincón Gastronómico.
-        Aquí podrás gestionar el inventario de forma clara, rápida y confiable, fortaleciendo nuestro orden interno,
-        el trabajo en equipo y el sentido de pertenencia con el restaurante.
-      </p>
+  const fragment = document.createDocumentFragment();
 
-      <div class="institucional-grid">
-        <article class="institucional-card">
-          <h4>Objetivo de la empresa</h4>
-          <p>
-            Nuestro objetivo es ofrecer una experiencia gastronómica que combine calidad constante en cada plato, un servicio amable y eficiente, higiene impecable y un ambiente acogedor que invite a quedarse. Buscamos que cada visita refleje una relación justa entre calidad y precio, conectando emocionalmente con nuestros clientes y haciéndolos sentir valorados desde su llegada hasta su salida. Con una identidad clara y el uso de ingredientes frescos y locales, trabajamos día a día para ser el restaurante de referencia en confianza, sabor y bienestar.
-          </p>
-        </article>
+  const title = document.createElement("h2");
+  title.textContent = "Panel operativo diario";
 
-        <article class="institucional-card">
-          <h4>Visión</h4>
-          <p>
-            Ser líderes en soluciones de gestión interna, ofreciendo herramientas modernas que mejoren
-            la productividad y el bienestar de nuestros equipos.
-          </p>
-        </article>
-      </div>
+  const intro = document.createElement("p");
+  intro.textContent =
+    "Selecciona una opción del menú para gestionar el inventario interno con tranquilidad y orden.";
 
-      <section class="testimonios" aria-labelledby="titulo-testimonios">
-        <h4 id="titulo-testimonios">Opiniones de nuestros trabajadores</h4>
-        <div class="testimonios-grid">
-          <blockquote class="testimonio-card">
-            <p>“El sistema nos ha permitido reducir errores y mejorar la trazabilidad.”</p>
-            <cite>– Laura Méndez</cite>
-          </blockquote>
-          <blockquote class="testimonio-card">
-            <p>“La interfaz es clara y fácil de usar, lo que agiliza nuestro trabajo.”</p>
-            <cite>– Carlos Ríos</cite>
-          </blockquote>
-          <blockquote class="testimonio-card">
-            <p>“Ahora tenemos más control del inventario y evitamos faltantes en horas pico.”</p>
-            <cite>– Andrea Salazar</cite>
-          </blockquote>
-          <blockquote class="testimonio-card">
-            <p>“Los reportes semanales nos ayudan a tomar decisiones más rápidas y acertadas.”</p>
-            <cite>– Felipe Montoya</cite>
-          </blockquote>
-          <blockquote class="testimonio-card">
-            <p>“La organización del sistema mejoró la coordinación entre cocina, compras y administración.”</p>
-            <cite>– Daniela Pardo</cite>
-          </blockquote>
-          <blockquote class="testimonio-card">
-            <p>“Se nota la mejora en los procesos: menos errores, más orden y mejor servicio al cliente.”</p>
-            <cite>– Julián Herrera</cite>
-          </blockquote>
-        </div>
-      </section>
-    </section>
-  `;
+  const institutionalSection = document.createElement("section");
+  institutionalSection.className = "institucional-intro";
+  institutionalSection.setAttribute("aria-labelledby", "titulo-introduccion-sistema");
+
+  const institutionalTitle = document.createElement("h3");
+  institutionalTitle.id = "titulo-introduccion-sistema";
+  institutionalTitle.textContent = "Bienvenidos al sistema de gestión interna";
+
+  const institutionalText = document.createElement("p");
+  institutionalText.textContent =
+    "Este espacio fue diseñado para apoyar el trabajo diario de cada colaborador de El Rincón Gastronómico. Aquí podrás gestionar el inventario de forma clara, rápida y confiable, fortaleciendo nuestro orden interno, el trabajo en equipo y el sentido de pertenencia con el restaurante.";
+
+  const institutionalGrid = document.createElement("div");
+  institutionalGrid.className = "institucional-grid";
+
+  const cardsData = [
+    {
+      title: "Objetivo de la empresa",
+      text: "Nuestro objetivo es ofrecer una experiencia gastronómica que combine calidad constante en cada plato, un servicio amable y eficiente, higiene impecable y un ambiente acogedor que invite a quedarse. Buscamos que cada visita refleje una relación justa entre calidad y precio, conectando emocionalmente con nuestros clientes y haciéndolos sentir valorados desde su llegada hasta su salida. Con una identidad clara y el uso de ingredientes frescos y locales, trabajamos día a día para ser el restaurante de referencia en confianza, sabor y bienestar.",
+    },
+    {
+      title: "Visión",
+      text: "Ser líderes en soluciones de gestión interna, ofreciendo herramientas modernas que mejoren la productividad y el bienestar de nuestros equipos.",
+    },
+  ];
+
+  cardsData.forEach((cardData) => {
+    const card = document.createElement("article");
+    card.className = "institucional-card";
+
+    const cardTitle = document.createElement("h4");
+    cardTitle.textContent = cardData.title;
+
+    const cardText = document.createElement("p");
+    cardText.textContent = cardData.text;
+
+    card.append(cardTitle, cardText);
+    institutionalGrid.appendChild(card);
+  });
+
+  const testimonialsSection = document.createElement("section");
+  testimonialsSection.className = "testimonios";
+  testimonialsSection.setAttribute("aria-labelledby", "titulo-testimonios");
+
+  const testimonialsTitle = document.createElement("h4");
+  testimonialsTitle.id = "titulo-testimonios";
+  testimonialsTitle.textContent = "Opiniones de nuestros trabajadores";
+
+  const testimonialsGrid = document.createElement("div");
+  testimonialsGrid.className = "testimonios-grid";
+
+  const testimonialsData = [
+    { text: "“El sistema nos ha permitido reducir errores y mejorar la trazabilidad.”", author: "– Laura Méndez" },
+    { text: "“La interfaz es clara y fácil de usar, lo que agiliza nuestro trabajo.”", author: "– Carlos Ríos" },
+    { text: "“Ahora tenemos más control del inventario y evitamos faltantes en horas pico.”", author: "– Andrea Salazar" },
+    { text: "“Los reportes semanales nos ayudan a tomar decisiones más rápidas y acertadas.”", author: "– Felipe Montoya" },
+    { text: "“La organización del sistema mejoró la coordinación entre cocina, compras y administración.”", author: "– Daniela Pardo" },
+    { text: "“Se nota la mejora en los procesos: menos errores, más orden y mejor servicio al cliente.”", author: "– Julián Herrera" },
+  ];
+
+  testimonialsData.forEach((testimonialData) => {
+    const testimonial = document.createElement("blockquote");
+    testimonial.className = "testimonio-card";
+
+    const testimonialText = document.createElement("p");
+    testimonialText.textContent = testimonialData.text;
+
+    const testimonialAuthor = document.createElement("cite");
+    testimonialAuthor.textContent = testimonialData.author;
+
+    testimonial.append(testimonialText, testimonialAuthor);
+    testimonialsGrid.appendChild(testimonial);
+  });
+
+  testimonialsSection.append(testimonialsTitle, testimonialsGrid);
+  institutionalSection.append(
+    institutionalTitle,
+    institutionalText,
+    institutionalGrid,
+    testimonialsSection
+  );
+
+  fragment.append(title, intro, institutionalSection);
+  content.appendChild(fragment);
 }
 
 // Configura la navegación básica
