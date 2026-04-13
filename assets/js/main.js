@@ -4,6 +4,7 @@ import {
   renderAuditoriaSection,
   renderAdministracionSection,
 } from "./index.js";
+import { setupSidebarNavigation } from "./sidebar.js";
 
 // Punto de entrada del frontend - Sistema de Inventario
 
@@ -11,6 +12,7 @@ import {
 function initApp() {
   renderWelcome();
   setupNavigation();
+  setupSidebar();
 }
 
 // Renderiza la vista de bienvenida
@@ -110,6 +112,19 @@ function renderSection(section) {
     default:
       renderWelcome();
   }
+}
+
+function renderMovimientosByTipo(tipo) {
+  const content = document.querySelector(".content");
+  renderMovimientosSection(content, { defaultTipo: tipo });
+}
+
+function setupSidebar() {
+  setupSidebarNavigation({
+    onWelcome: renderWelcome,
+    onSectionNavigate: renderSection,
+    onMovimientosNavigate: renderMovimientosByTipo,
+  });
 }
 
 // Inicializa la aplicación al cargar la página
