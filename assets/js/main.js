@@ -1,4 +1,10 @@
-// index.js
+import {
+  renderInventarioSection,
+  renderMovimientosSection,
+  renderAuditoriaSection,
+  renderAdministracionSection,
+} from "./index.js";
+
 // Punto de entrada del frontend - Sistema de Inventario
 
 // Función para inicializar la aplicación
@@ -11,15 +17,15 @@ function initApp() {
 function renderWelcome() {
   const content = document.querySelector(".content");
   content.innerHTML = `
-    <h2>Bienvenido</h2>
-    <p>Seleccione una opción del menú para comenzar.</p>
+    <h2>Panel operativo diario</h2>
+    <p>Selecciona una opción del menú para gestionar el inventario interno con tranquilidad y orden.</p>
   `;
 }
 
 // Configura la navegación básica
 function setupNavigation() {
   const navLinks = document.querySelectorAll(".nav a");
-  navLinks.forEach(link => {
+  navLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       const section = event.target.textContent;
@@ -33,29 +39,17 @@ function renderSection(section) {
   const content = document.querySelector(".content");
 
   switch (section) {
-    case "Usuarios":
-      content.innerHTML = `
-        <h2>Gestión de Usuarios</h2>
-        <p>Aquí se mostrará el formulario para crear y listar usuarios.</p>
-      `;
+    case "Inventario":
+      renderInventarioSection(content);
       break;
-    case "Categorías":
-      content.innerHTML = `
-        <h2>Gestión de Categorías</h2>
-        <p>Aquí se mostrará el formulario para crear y listar categorías.</p>
-      `;
-      break;
-    case "Productos":
-      content.innerHTML = `
-        <h2>Gestión de Productos</h2>
-        <p>Aquí se mostrará el formulario para crear y listar productos.</p>
-      `;
+    case "Movimientos":
+      renderMovimientosSection(content);
       break;
     case "Auditoría":
-      content.innerHTML = `
-        <h2>Auditoría</h2>
-        <p>Aquí se mostrarán los reportes de acciones realizadas por cada usuario.</p>
-      `;
+      renderAuditoriaSection(content);
+      break;
+    case "Administración":
+      renderAdministracionSection(content);
       break;
     default:
       renderWelcome();

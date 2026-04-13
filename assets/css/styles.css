@@ -1,9 +1,27 @@
 /* Variables globales para colores y tipografía */
 :root {
-  --color-primario: #2c3e50;
-  --color-secundario: #3498db;
-  --color-fondo: #ecf0f1;
-  --color-texto: #333;
+  /* Paleta principal (uso interno inventario) */
+  --color-primario: #2F5D8A;
+  --color-primario-hover: #244A6D;
+  --color-secundario: #4C8C7A;
+
+  /* Base visual */
+  --color-fondo: #F7F9FC;
+  --color-superficie: #FFFFFF;
+  --color-borde: #D9E1EC;
+
+  /* Texto */
+  --color-texto: #1F2A37;
+  --color-texto-secundario: #4B5563;
+  --color-texto-tenue: #6B7280;
+  --color-texto-sobre-primario: #FFFFFF;
+
+  /* Estados */
+  --color-exito: #2E7D32;
+  --color-advertencia: #D97706;
+  --color-error: #C62828;
+  --color-info: #2563EB;
+
   --fuente-base: 'Segoe UI', Arial, sans-serif;
 }
 
@@ -12,12 +30,13 @@ body {
   font-family: var(--fuente-base);
   background-color: var(--color-fondo);
   color: var(--color-texto);
+  line-height: 1.5;
 }
 
 /* Cabecera */
 .header {
   background-color: var(--color-primario);
-  color: white;
+  color: var(--color-texto-sobre-primario);
   padding: 1rem;
   display: flex;
   justify-content: space-between;
@@ -38,12 +57,13 @@ body {
 }
 
 .nav a {
-  color: white;
+  color: var(--color-texto-sobre-primario);
   text-decoration: none;
 }
 
 .nav a:hover {
   text-decoration: underline;
+  opacity: 0.95;
 }
 
 /* Layout principal con Grid */
@@ -55,9 +75,10 @@ body {
 
 /* Sidebar */
 .sidebar {
-  background-color: var(--color-secundario);
-  color: white;
+  background-color: var(--color-superficie);
+  color: var(--color-texto);
   padding: 1rem;
+  border-right: 1px solid var(--color-borde);
 }
 
 .sidebar h2 {
@@ -67,12 +88,13 @@ body {
 /* Contenido */
 .content {
   padding: 2rem;
+  background-color: var(--color-superficie);
 }
 
 /* Footer */
 .footer {
   background-color: var(--color-primario);
-  color: white;
+  color: var(--color-texto-sobre-primario);
   text-align: center;
   padding: 1rem;
 }
