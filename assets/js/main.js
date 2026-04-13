@@ -3,16 +3,91 @@ import {
   renderMovimientosSection,
   renderAuditoriaSection,
   renderAdministracionSection,
+  renderLoginSection,
+  getCurrentSessionUser,
+  logoutSessionUser,
 } from "./index.js";
 import { setupSidebarNavigation } from "./sidebar.js";
 
 // Punto de entrada del frontend - Sistema de Inventario
 
+function getContentElement() {
+  return document.querySelector(".content");
+}
+
+function isAuthenticated() {
+  return Boolean(getCurrentSessionUser());
+}
+
+function setNavigationEnabled(enabled) {
+  const navLinks = document.querySelectorAll(".nav a");
+  const sidebarLinks = document.querySelectorAll(".sidebar a");
+
+  [...navLinks, ...sidebarLinks].forEach((link) => {
+    link.style.pointerEvents = enabled ? "auto" : "none";
+    link.style.opacity = enabled ? "1" : "0.55";
+  });
+}
+
+function ensureLogoutButton() {
+  const header = document.querySelector(".header");
+  if (!header) return;
+
+  let button = header.querySelector("#logout-btn");
+  if (!button) {
+    button = document.createElement("button");
+    button.id = "logout-btn";
+    button.className = "logout-btn";
+    button.textContent = "Cerrar sesión";
+  }
+
+  button.style.display = isAuthenticated() ? "inline-flex" : "none";
+
+  if (!button.dataset.boundLogout) {
+    button.addEventListener("click", () => {
+      logoutSessionUser();
+      button.style.display = "none";
+      renderLogin();
+      setNavigationEnabled(false);
+    });
+    button.dataset.boundLogout = "true";
+  }
+
+  const sessionActions = document.querySelector("#session-actions");
+  if (sessionActions) {
+    sessionActions.innerHTML = "";
+    sessionActions.appendChild(button);
+    return;
+  }
+
+  const nav = header.querySelector(".nav");
+  header.insertBefore(button, nav);
+}
+
+function renderLogin() {
+  const content = getContentElement();
+  renderLoginSection(content, () => {
+    setNavigationEnabled(true);
+    ensureLogoutButton();
+    renderWelcome();
+  });
+}
+
 // Función para inicializar la aplicación
 function initApp() {
-  renderWelcome();
   setupNavigation();
   setupSidebar();
+  ensureLogoutButton();
+
+  if (isAuthenticated()) {
+    setNavigationEnabled(true);
+    ensureLogoutButton();
+    renderWelcome();
+  } else {
+    setNavigationEnabled(false);
+    ensureLogoutButton();
+    renderLogin();
+  }
 }
 
 // Renderiza la vista de bienvenida
