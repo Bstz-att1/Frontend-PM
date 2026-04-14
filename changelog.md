@@ -882,8 +882,30 @@ Se reemplazó lógica basada en inventario local por consumo backend:
   - render en tabla/resumen dinámicos.
 
 #### `assets/js/movimientos.js`
-Se verificó compatibilidad con la integración actual.
-- Estado: sin cambios obligatorios para la conexión inicial, mantiene su flujo de validación local sin romper navegación ni arquitectura.
+Se conectó el módulo de Movimientos con el backend actual reutilizando el endpoint de auditoría.
+
+- Antes:
+  - Solo validaba datos localmente y no persistía nada en backend.
+- Ahora:
+  - Importa funciones API:
+    - `createAuditLog`
+    - `getAllUsers`
+  - En `submit`, tras validar:
+    - resuelve `usuario_id` desde sesión (`rg_current_user`) con fallback al primer usuario del backend o `1`.
+    - mapea tipo de movimiento a acción de auditoría:
+      - `entrada` → `MOVIMIENTO_ENTRADA`
+      - `salida` → `MOVIMIENTO_SALIDA`
+    - construye `detalles` con `producto`, `cantidad` y `motivo`.
+    - envía payload compatible con `/auditoria`:
+      - `usuario_id`
+      - `accion`
+      - `tabla_afectada: "productos"`
+      - `registro_id: 0`
+      - `detalles`
+  - Agrega carga inicial de usuarios (`initUsers`) para mejorar resolución de autor.
+  - Mantiene validaciones existentes y ahora muestra:
+    - éxito real de persistencia: `"Movimiento registrado correctamente."`
+    - error real de API cuando falle la petición.
 
 #### Resultado funcional de la integración
 - Frontend consumiendo endpoints REST reales:
