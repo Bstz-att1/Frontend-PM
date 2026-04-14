@@ -1,6 +1,6 @@
+import { getAllAuditLogs, createAuditLog, getAllUsers } from "./api.js";
+
 export function renderAuditoriaSection(content) {
-  const productos = loadProductosInventario();
-  const productosPorUsuario = agruparProductosPorUsuario(productos);
 
   content.innerHTML = `
     <h2>Auditoría</h2>
@@ -31,13 +31,40 @@ export function renderAuditoriaSection(content) {
 
   const resumenUsuariosContainer = content.querySelector("#auditoria-resumen-usuarios");
   const productosPorUsuarioContainer = content.querySelector("#auditoria-productos-por-usuario");
-  renderResumenPorUsuario(resumenUsuariosContainer, productosPorUsuario);
-  renderProductosPorUsuario(productosPorUsuarioContainer, productosPorUsuario);
-
   const form = content.querySelector("#auditoria-form");
   const errorsContainer = content.querySelector("#auditoria-errors");
 
-  form.addEventListener("submit", (event) => {
+  async function refreshAuditData() {
+    try {
+      const [auditLogs, users] = await Promise.all([
+        getAllAuditLogs(),
+        getAllUsers(),
+      ]);
+
+      const normalizedAudit = Array.isArray(auditLogs) ? auditLogs : [];
+      const usersById = (Array.isArray(users) ? users : []).reduce((acc, user) => {
+        acc[String(user.id)] = user.nombre || `Usuario ${user.id}`;
+        return acc;
+      }, {});
+
+      const enrichedAudit = normalizedAudit.map((item) => ({
+        ...item,
+        usuario_nombre: usersById[String(item.usuario_id)] || `Usuario ${item.usuario_id}`,
+      }));
+
+      const auditoriaPorUsuario = agruparAuditoriaPorUsuario(enrichedAudit);
+      renderResumenPorUsuario(resumenUsuariosContainer, auditoriaPorUsuario);
+      renderAuditoriaPorUsuario(productosPorUsuarioContainer, auditoriaPorUsuario);
+    } catch (error) {
+      renderErrors(errorsContainer, [
+        error.message || "No fue posible cargar los registros de auditoría.",
+      ]);
+      renderResumenPorUsuario(resumenUsuariosContainer, {});
+      renderAuditoriaPorUsuario(productosPorUsuarioContainer, {});
+    }
+  }
+
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const errores = [];
 
@@ -65,33 +92,60 @@ export function renderAuditoriaSection(content) {
       errores.push("La descripción del hallazgo debe contener solo texto para conservar evidencia clara en la auditoría.");
     }
 
-    renderErrors(errorsContainer, errores);
+    if (errores.length > 0) {
+      renderErrors(errorsContainer, errores);
+      return;
+    }
+
+    const usuarioSesion = getSessionUser();
+    const usuarioId = usuarioSesion?.id || 1;
+
+    try {
+      await createAuditLog({
+        usuario_id: usuarioId,
+        accion: hallazgo.toUpperCase(),
+        tabla_afectada: "productos",
+        registro_id: 0,
+        detalles: `${producto}: ${descripcion}`,
+      });
+
+      renderErrors(errorsContainer, []);
+      form.reset();
+      await refreshAuditData();
+    } catch (error) {
+      renderErrors(errorsContainer, [
+        error.message || "No fue posible registrar el hallazgo.",
+      ]);
+    }
   });
+
+  refreshAuditData();
 }
 
-function loadProductosInventario() {
+function getSessionUser() {
   try {
-    const raw = localStorage.getItem("inventarioProductos");
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    const sessionRaw = sessionStorage.getItem("rg_current_user");
+    if (!sessionRaw) return null;
+    const parsed = JSON.parse(sessionRaw);
+    if (parsed?.id) return parsed;
+    return null;
   } catch {
-    return [];
+    return null;
   }
 }
 
-function agruparProductosPorUsuario(productos) {
-  return productos.reduce((acc, producto) => {
+function agruparAuditoriaPorUsuario(registros) {
+  return registros.reduce((acc, registro) => {
     const usuario =
-      producto && producto.creadoPor && String(producto.creadoPor).trim()
-        ? String(producto.creadoPor).trim()
+      registro && registro.usuario_nombre && String(registro.usuario_nombre).trim()
+        ? String(registro.usuario_nombre).trim()
         : "Usuario no identificado";
 
     if (!acc[usuario]) {
       acc[usuario] = [];
     }
 
-    acc[usuario].push(producto);
+    acc[usuario].push(registro);
     return acc;
   }, {});
 }
@@ -131,7 +185,7 @@ function renderResumenPorUsuario(container, productosPorUsuario) {
   `;
 }
 
-function renderProductosPorUsuario(container, productosPorUsuario) {
+function renderAuditoriaPorUsuario(container, productosPorUsuario) {
   const usuarios = Object.keys(productosPorUsuario);
 
   if (usuarios.length === 0) {
@@ -146,14 +200,14 @@ function renderProductosPorUsuario(container, productosPorUsuario) {
         return `
           <article class="auditoria-usuario-card panel-card">
             <h4>${usuario}</h4>
-            <p>Total de productos creados: <strong>${productos.length}</strong></p>
-            <div class="table-wrapper" role="region" aria-label="Productos de ${usuario}">
+            <p>Total de registros: <strong>${productos.length}</strong></p>
+            <div class="table-wrapper" role="region" aria-label="Auditoría de ${usuario}">
               <table class="table-pro">
                 <thead>
                   <tr>
-                    <th>Producto</th>
-                    <th>Categoría</th>
-                    <th>Fecha de creación</th>
+                    <th>Acción</th>
+                    <th>Tabla afectada</th>
+                    <th>Detalles</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -161,9 +215,9 @@ function renderProductosPorUsuario(container, productosPorUsuario) {
                     .map(
                       (producto) => `
                         <tr>
-                          <td>${producto.nombre || "Producto sin nombre"}</td>
-                          <td>${producto.categoria || "No definida"}</td>
-                          <td>${producto.fechaCreacion || "Sin fecha"}</td>
+                          <td>${producto.accion || "Sin acción"}</td>
+                          <td>${producto.tabla_afectada || "No definida"}</td>
+                          <td>${producto.detalles || "Sin detalles"}</td>
                         </tr>
                       `
                     )
