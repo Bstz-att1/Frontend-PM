@@ -916,3 +916,78 @@ Se conectó el módulo de Movimientos con el backend actual reutilizando el endp
 - Formularios principales enviando JSON al backend.
 - Render dinámico de tablas/listados basado en respuesta del servidor.
 - Se preserva arquitectura modular del frontend y estilo visual existente.
+
+---
+
+### 🔐 Autenticación JWT + autorización por rol (admin/user) en frontend
+
+Se migró la autenticación de demo local a autenticación real contra backend y se agregó manejo de token para consumir rutas protegidas.
+
+#### `assets/js/auth.js` (nuevo)
+Se creó un módulo centralizado de autenticación/sesión:
+
+- `login(username, password)`
+  - consume `POST /auth/login`
+  - almacena token y usuario autenticado en `sessionStorage`
+- `logout()`
+  - limpia sesión/token
+- `getToken()`
+  - retorna JWT actual
+- `getSessionUser()`
+  - retorna usuario autenticado en sesión
+- `hasRole(role)`
+  - helper para validación de rol en UI
+
+#### `assets/js/api.js`
+Se actualizó el cliente API para enviar JWT automáticamente en cada petición:
+
+- Se importa `getToken()` desde `auth.js`
+- En `request(...)` se agrega header:
+  - `Authorization: Bearer <token>` (cuando existe token)
+- Se mantiene manejo estandarizado de errores y parseo JSON.
+
+#### `assets/js/usuarios.js`
+Se reemplazó el login demo por login real de backend y se aplicó control por rol en UI:
+
+- Login:
+  - elimina validación hardcoded `admin/admin123`
+  - ahora usa `login(...)` del módulo `auth.js`
+- Sesión:
+  - `getCurrentSessionUser()` y `logoutSessionUser()` delegan al módulo `auth.js`
+- Administración de usuarios:
+  - módulo restringido visualmente a rol `admin`
+  - usuarios `user` ven mensaje de acceso denegado para gestión administrativa
+- Formulario de creación:
+  - ahora incluye `username` y `password` para alinear con backend seguro
+- Tabla:
+  - muestra columna `username` junto a `id`, `nombre`, `documento`, `rol`
+
+### Resultado en frontend
+- Flujo de sesión real contra backend JWT.
+- Persistencia de token para consumir endpoints protegidos.
+- Control de visibilidad por rol en la interfaz de administración.
+- Estructura modular mantenida (`auth.js` + `api.js` + módulos de vista).
+
+---
+
+### 🧩 Ajuste de rutas CSS en hoja agregadora
+
+Se corrigieron las rutas `@import` del archivo agregador de estilos para mantener resolución consistente de hojas CSS en distintos contextos de despliegue estático.
+
+#### `assets/css/styles.css`
+- Antes (rutas absolutas):
+  - `@import url('/assets/css/base.css');`
+  - `@import url('/assets/css/header.css');`
+  - `@import url('/assets/css/sidebar.css');`
+  - `@import url('/assets/css/content.css');`
+  - `@import url('/assets/css/footer.css');`
+- Ahora (rutas relativas al mismo directorio):
+  - `@import url('./base.css');`
+  - `@import url('./header.css');`
+  - `@import url('./sidebar.css');`
+  - `@import url('./content.css');`
+  - `@import url('./footer.css');`
+
+#### Resultado
+- La carga de estilos vuelve a resolverse correctamente desde `styles.css`.
+- Se conserva la arquitectura modular por archivos (`base`, `header`, `sidebar`, `content`, `footer`).
