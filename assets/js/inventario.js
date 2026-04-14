@@ -1,7 +1,16 @@
+import {
+  getAllCategories,
+  createCategory,
+  getAllProducts,
+  createProduct,
+  getAllUsers,
+  createAuditLog,
+} from "./api.js";
+
 export function renderInventarioSection(content) {
-  const categorias = ["cocina", "barra", "suministros"];
-  const PRODUCTOS_STORAGE_KEY = "inventarioProductos";
-  const productos = loadProductos();
+  let categorias = [];
+  let productos = [];
+  let usuarios = [];
 
   content.innerHTML = `
     <h2>Inventario</h2>
@@ -79,85 +88,28 @@ export function renderInventarioSection(content) {
 
   function getSessionUser() {
     try {
-      const sessionUserRaw = localStorage.getItem("sessionUser");
-      if (sessionUserRaw) {
-        try {
-          const parsed = JSON.parse(sessionUserRaw);
-          if (typeof parsed === "string" && parsed.trim()) {
-            return parsed.trim();
-          }
-          if (parsed && typeof parsed === "object") {
-            const candidate = parsed.username || parsed.nombre || parsed.name;
-            if (candidate && String(candidate).trim()) {
-              return String(candidate).trim();
-            }
-          }
-        } catch {
-          if (sessionUserRaw.trim()) {
-            return sessionUserRaw.trim();
-          }
-        }
-      }
-
-      const currentUserRaw = localStorage.getItem("currentUser");
-      if (currentUserRaw) {
-        try {
-          const parsed = JSON.parse(currentUserRaw);
-          if (typeof parsed === "string" && parsed.trim()) {
-            return parsed.trim();
-          }
-          if (parsed && typeof parsed === "object") {
-            const candidate = parsed.username || parsed.nombre || parsed.name;
-            if (candidate && String(candidate).trim()) {
-              return String(candidate).trim();
-            }
-          }
-        } catch {
-          if (currentUserRaw.trim()) {
-            return currentUserRaw.trim();
-          }
-        }
-      }
-
-      const username = localStorage.getItem("username");
-      if (username && username.trim()) {
-        return username.trim();
-      }
+      const sessionRaw = sessionStorage.getItem("rg_current_user");
+      if (!sessionRaw) return null;
+      const parsed = JSON.parse(sessionRaw);
+      if (parsed?.id) return parsed;
+      return null;
     } catch {
-      return "Usuario no identificado";
-    }
-
-    return "Usuario no identificado";
-  }
-
-  function loadProductos() {
-    try {
-      const raw = localStorage.getItem(PRODUCTOS_STORAGE_KEY);
-      if (!raw) return [];
-      const parsed = JSON.parse(raw);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  }
-
-  function saveProductos() {
-    try {
-      localStorage.setItem(PRODUCTOS_STORAGE_KEY, JSON.stringify(productos));
-    } catch {
-      // Ignorar errores de almacenamiento para no romper la UI
+      return null;
     }
   }
 
   function renderCategoriasList() {
     categoriasList.innerHTML = categorias
-      .map((categoria) => `<li>${categoria}</li>`)
+      .map((categoria) => `<li>${categoria.nombre}</li>`)
       .join("");
   }
 
   function renderCategoriaOptions() {
     const options = categorias
-      .map((categoria) => `<option value="${categoria}">${categoria}</option>`)
+      .map(
+        (categoria) =>
+          `<option value="${categoria.id}">${categoria.nombre}</option>`
+      )
       .join("");
 
     categoriaSelect.innerHTML = `
@@ -195,11 +147,11 @@ export function renderInventarioSection(content) {
               (producto) => `
                 <tr>
                   <td>${producto.nombre}</td>
-                  <td>${producto.categoria}</td>
-                  <td>${producto.cantidadInicial}</td>
-                  <td>${producto.proveedor}</td>
-                  <td>${producto.creadoPor}</td>
-                  <td>${producto.fechaCreacion}</td>
+                  <td>${producto.categoria_nombre || producto.categoria_id || "N/A"}</td>
+                  <td>${producto.cantidad ?? 0}</td>
+                  <td>${producto.descripcion || "No especificado"}</td>
+                  <td>${producto.usuario_nombre || "Sistema"}</td>
+                  <td>${producto.creado_en || "Sin fecha"}</td>
                 </tr>
               `
             )
@@ -211,14 +163,14 @@ export function renderInventarioSection(content) {
 
   function applyFilters() {
     const filtroNombre = normalizeText(filtroNombreInput.value || "");
-    const filtroCategoria = normalizeText(filtroCategoriaSelect.value || "");
+    const filtroCategoria = String(filtroCategoriaSelect.value || "");
 
     const filtrados = productos.filter((producto) => {
       const coincideNombre = filtroNombre
-        ? normalizeText(producto.nombre).includes(filtroNombre)
+        ? normalizeText(producto.nombre || "").includes(filtroNombre)
         : true;
       const coincideCategoria = filtroCategoria
-        ? normalizeText(producto.categoria) === filtroCategoria
+        ? String(producto.categoria_id || "") === filtroCategoria
         : true;
       return coincideNombre && coincideCategoria;
     });
@@ -226,7 +178,7 @@ export function renderInventarioSection(content) {
     renderProductos(filtrados);
   }
 
-  categoriaForm.addEventListener("submit", (event) => {
+  categoriaForm.addEventListener("submit", async (event) => {
     event.preventDefault();
     const nuevaCategoriaRaw = categoriaForm.categoriaNombre.value;
     const nuevaCategoria = normalizeText(nuevaCategoriaRaw);
@@ -236,7 +188,11 @@ export function renderInventarioSection(content) {
       errores.push("El nombre de la categoría es requerido.");
     } else if (!soloTextoRegex.test(nuevaCategoria)) {
       errores.push("La categoría debe contener solo texto.");
-    } else if (categorias.includes(nuevaCategoria)) {
+    } else if (
+      categorias.some(
+        (categoria) => normalizeText(categoria.nombre || "") === nuevaCategoria
+      )
+    ) {
       errores.push("La categoría ya existe en el listado.");
     }
 
@@ -249,20 +205,29 @@ export function renderInventarioSection(content) {
       return;
     }
 
-    categorias.push(nuevaCategoria);
-    renderCategoriasList();
-    renderCategoriaOptions();
-    categoriaForm.reset();
-    categoriaMessages.innerHTML = `<p>Categoría creada correctamente.</p>`;
-    applyFilters();
+    try {
+      await createCategory({
+        nombre: nuevaCategoriaRaw.trim(),
+        descripcion: "Categoría creada desde frontend",
+      });
+
+      categorias = await getAllCategories();
+      renderCategoriasList();
+      renderCategoriaOptions();
+      categoriaForm.reset();
+      categoriaMessages.innerHTML = `<p>Categoría creada correctamente.</p>`;
+      applyFilters();
+    } catch (error) {
+      categoriaMessages.innerHTML = `<ul><li>${error.message || "No se pudo crear la categoría."}</li></ul>`;
+    }
   });
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const errores = [];
 
     const nombre = form.nombre.value.trim();
-    const categoria = form.categoria.value.trim();
+    const categoriaId = Number(form.categoria.value);
     const cantidad = Number(form.cantidadInicial.value);
     const proveedor = form.proveedor.value.trim();
 
@@ -272,9 +237,9 @@ export function renderInventarioSection(content) {
       errores.push("El nombre del producto debe contener solo texto para mantener una identificación clara en inventario.");
     }
 
-    if (!categoria) {
+    if (!categoriaId) {
       errores.push("Debe seleccionar una categoría para registrar el producto.");
-    } else if (!categorias.includes(normalizeText(categoria))) {
+    } else if (!categorias.some((categoria) => Number(categoria.id) === categoriaId)) {
       errores.push("La categoría seleccionada no es válida.");
     }
 
@@ -293,28 +258,69 @@ export function renderInventarioSection(content) {
       return;
     }
 
-    const nuevoProducto = {
-      nombre,
-      categoria: normalizeText(categoria),
-      cantidadInicial: cantidad,
-      proveedor,
-      creadoPor: getSessionUser(),
-      fechaCreacion: new Date().toLocaleString("es-CO"),
-    };
+    const usuarioSesion = getSessionUser();
+    const usuarioId =
+      usuarioSesion?.id ||
+      (usuarios.length > 0 ? Number(usuarios[0].id) : 1);
 
-    productos.push(nuevoProducto);
-    saveProductos();
-    renderErrors(errorsContainer, []);
-    form.reset();
-    applyFilters();
+    try {
+      await createProduct({
+        nombre,
+        descripcion: proveedor,
+        categoria_id: categoriaId,
+        cantidad,
+      });
+
+      try {
+        await createAuditLog({
+          usuario_id: usuarioId,
+          accion: "INSERT",
+          tabla_afectada: "productos",
+          registro_id: 0,
+          detalles: `Producto ${nombre} creado desde inventario`,
+        });
+      } catch {
+        // No romper UX si auditoría falla
+      }
+
+      productos = await getAllProducts();
+      renderErrors(errorsContainer, []);
+      form.reset();
+      applyFilters();
+    } catch (error) {
+      renderErrors(errorsContainer, [error.message || "No se pudo registrar el producto."]);
+    }
   });
 
   filtroNombreInput.addEventListener("input", applyFilters);
   filtroCategoriaSelect.addEventListener("change", applyFilters);
 
-  renderCategoriasList();
-  renderCategoriaOptions();
-  renderProductos(productos);
+  async function initData() {
+    try {
+      const [apiCategorias, apiProductos, apiUsuarios] = await Promise.all([
+        getAllCategories(),
+        getAllProducts(),
+        getAllUsers(),
+      ]);
+
+      categorias = Array.isArray(apiCategorias) ? apiCategorias : [];
+      productos = Array.isArray(apiProductos) ? apiProductos : [];
+      usuarios = Array.isArray(apiUsuarios) ? apiUsuarios : [];
+    } catch (error) {
+      categorias = [];
+      productos = [];
+      usuarios = [];
+      renderErrors(errorsContainer, [
+        error.message || "No fue posible cargar inventario desde backend.",
+      ]);
+    }
+
+    renderCategoriasList();
+    renderCategoriaOptions();
+    renderProductos(productos);
+  }
+
+  initData();
 }
 
 function renderErrors(container, errors) {
