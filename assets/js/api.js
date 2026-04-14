@@ -1,9 +1,14 @@
+import { getToken } from "./auth.js";
+
 const API_BASE_URL = "http://localhost:3000";
 
 async function request(endpoint, options = {}) {
+  const token = getToken();
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
     ...options,
