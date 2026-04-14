@@ -1,44 +1,15 @@
-const STORAGE_USERS_KEY = "rg_users";
+import { getAllUsers, createUser } from "./api.js";
+
 const SESSION_USER_KEY = "rg_current_user";
 
-const DEFAULT_USERS = [
+const FALLBACK_USERS = [
   {
     id: 1,
     nombre: "Administrador General",
-    username: "admin",
-    password: "admin123",
-    rol: "Administrador",
+    documento: "1000000000",
+    rol: "admin",
   },
 ];
-
-function readUsers() {
-  const raw = localStorage.getItem(STORAGE_USERS_KEY);
-  if (!raw) {
-    localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(DEFAULT_USERS));
-    return [...DEFAULT_USERS];
-  }
-
-  try {
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(DEFAULT_USERS));
-      return [...DEFAULT_USERS];
-    }
-    return parsed;
-  } catch (error) {
-    localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(DEFAULT_USERS));
-    return [...DEFAULT_USERS];
-  }
-}
-
-function saveUsers(users) {
-  localStorage.setItem(STORAGE_USERS_KEY, JSON.stringify(users));
-}
-
-function getNextId(users) {
-  if (!users.length) return 1;
-  return Math.max(...users.map((user) => Number(user.id) || 0)) + 1;
-}
 
 function escapeHtml(value = "") {
   return value
@@ -75,15 +46,17 @@ export function logoutSessionUser() {
 }
 
 export function tryLogin(username, password) {
-  const users = readUsers();
-  const found = users.find(
-    (user) => user.username === username && user.password === password
-  );
+  if (username === "admin" && password === "admin123") {
+    setCurrentSession({
+      id: 1,
+      nombre: "Administrador General",
+      username: "admin",
+      rol: "Administrador",
+    });
+    return getCurrentSessionUser();
+  }
 
-  if (!found) return null;
-
-  setCurrentSession(found);
-  return getCurrentSessionUser();
+  return null;
 }
 
 function renderUsersTable(container, users) {
@@ -96,10 +69,10 @@ function renderUsersTable(container, users) {
     .map(
       (user) => `
       <tr>
-        <td>${escapeHtml(String(user.id))}</td>
-        <td>${escapeHtml(user.nombre)}</td>
-        <td>${escapeHtml(user.username)}</td>
-        <td>${escapeHtml(user.rol)}</td>
+        <td>${escapeHtml(String(user.id ?? ""))}</td>
+        <td>${escapeHtml(user.nombre || "")}</td>
+        <td>${escapeHtml(user.documento ? String(user.documento) : "N/A")}</td>
+        <td>${escapeHtml(user.rol || "")}</td>
       </tr>
     `
     )
@@ -112,7 +85,7 @@ function renderUsersTable(container, users) {
           <tr>
             <th>ID</th>
             <th>Nombre</th>
-            <th>Username</th>
+            <th>Documento</th>
             <th>Rol</th>
           </tr>
         </thead>
@@ -123,8 +96,6 @@ function renderUsersTable(container, users) {
 }
 
 export function renderUsuariosSection(content) {
-  const users = readUsers();
-
   content.innerHTML = `
     <h2>Administración de usuarios</h2>
     <p>Gestiona cuentas internas y consulta el listado dinámico con una visualización clara y profesional.</p>
@@ -135,18 +106,14 @@ export function renderUsuariosSection(content) {
         <label for="usr-nombre">Nombre</label>
         <input id="usr-nombre" name="nombre" type="text" placeholder="Ej: Laura Méndez" required />
 
-        <label for="usr-username">Username</label>
-        <input id="usr-username" name="username" type="text" placeholder="Ej: laura.mendez" required />
-
-        <label for="usr-password">Password</label>
-        <input id="usr-password" name="password" type="password" placeholder="Mínimo 6 caracteres" required />
+        <label for="usr-documento">Documento</label>
+        <input id="usr-documento" name="documento" type="text" placeholder="Ej: 1020304050" required />
 
         <label for="usr-rol">Rol</label>
         <select id="usr-rol" name="rol" required>
           <option value="">Seleccione un rol</option>
-          <option value="Administrador">Administrador</option>
-          <option value="Operador">Operador</option>
-          <option value="Supervisor">Supervisor</option>
+          <option value="admin">Administrador</option>
+          <option value="user">Usuario</option>
         </select>
 
         <button type="submit">Crear usuario</button>
@@ -164,18 +131,28 @@ export function renderUsuariosSection(content) {
   const errorsContainer = content.querySelector("#usuarios-errors");
   const listContainer = content.querySelector("#usuarios-listado");
 
-  renderUsersTable(listContainer, users);
+  async function refreshUsers() {
+    try {
+      const apiUsers = await getAllUsers();
+      renderUsersTable(listContainer, apiUsers);
+    } catch (error) {
+      errorsContainer.innerHTML = `<ul><li>${escapeHtml(
+        error.message || "No fue posible cargar usuarios desde el backend."
+      )}</li></ul>`;
+      renderUsersTable(listContainer, FALLBACK_USERS);
+    }
+  }
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const nombre = form.nombre.value.trim();
-    const username = form.username.value.trim();
-    const password = form.password.value.trim();
+    const documento = form.documento.value.trim();
     const rol = form.rol.value.trim();
 
     const errores = [];
     const soloTextoRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
+    const soloNumerosRegex = /^\d+$/;
 
     if (!nombre) {
       errores.push("El nombre es obligatorio.");
@@ -183,28 +160,14 @@ export function renderUsuariosSection(content) {
       errores.push("El nombre debe contener solo letras y espacios.");
     }
 
-    if (!username) {
-      errores.push("El username es obligatorio.");
-    } else if (username.length < 4) {
-      errores.push("El username debe tener al menos 4 caracteres.");
-    }
-
-    if (!password) {
-      errores.push("La contraseña es obligatoria.");
-    } else if (password.length < 6) {
-      errores.push("La contraseña debe tener mínimo 6 caracteres.");
+    if (!documento) {
+      errores.push("El documento es obligatorio.");
+    } else if (!soloNumerosRegex.test(documento)) {
+      errores.push("El documento debe contener solo números.");
     }
 
     if (!rol) {
       errores.push("Debe seleccionar un rol.");
-    }
-
-    const latestUsers = readUsers();
-    const existsUsername = latestUsers.some(
-      (user) => user.username.toLowerCase() === username.toLowerCase()
-    );
-    if (existsUsername) {
-      errores.push("Ese username ya existe, debe ser único.");
     }
 
     if (errores.length > 0) {
@@ -214,21 +177,30 @@ export function renderUsuariosSection(content) {
       return;
     }
 
-    const nuevoUsuario = {
-      id: getNextId(latestUsers),
-      nombre,
-      username,
-      password,
-      rol,
-    };
+    try {
+      await createUser({
+        documento,
+        nombre,
+        rol,
+      });
 
-    const updatedUsers = [...latestUsers, nuevoUsuario];
-    saveUsers(updatedUsers);
+      errorsContainer.innerHTML = "<p>Usuario creado correctamente en backend.</p>";
+      form.reset();
+      await refreshUsers();
+    } catch (error) {
+      const backendErrors = Array.isArray(error.errors) ? error.errors : [];
+      const items = [
+        escapeHtml(error.message || "No fue posible crear el usuario."),
+        ...backendErrors.map((item) => escapeHtml(String(item))),
+      ];
 
-    errorsContainer.innerHTML = "<p>Usuario creado correctamente.</p>";
-    form.reset();
-    renderUsersTable(listContainer, updatedUsers);
+      errorsContainer.innerHTML = `<ul>${items
+        .map((item) => `<li>${item}</li>`)
+        .join("")}</ul>`;
+    }
   });
+
+  refreshUsers();
 }
 
 export function renderLoginSection(content, onLoginSuccess) {
