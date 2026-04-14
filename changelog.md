@@ -799,3 +799,98 @@ Se ajustaron selectores para que el render dinámico (incluyendo login) funcione
 - CSS desacoplado por componentes (arquitectura escalable).
 - Convención BEM aplicada en estructura principal.
 - Flujo de login/render restablecido tras alinear selectores JS con el nuevo HTML.
+
+---
+
+### 🌐 Integración Frontend ↔ Backend con API centralizada (iteración reciente)
+
+Se conectó el frontend con el backend REST manteniendo la modularización existente (una vista por archivo) y exportaciones centralizadas desde el barril `assets/js/index.js`.
+
+#### `assets/js/api.js` (nuevo)
+Se creó un módulo de acceso a datos para centralizar todas las llamadas `fetch` al backend.
+
+- URL base:
+  - `API_BASE_URL = "http://localhost:3000"`
+- Wrapper interno:
+  - `request(endpoint, options)` con:
+    - headers JSON por defecto
+    - parseo de respuesta JSON
+    - manejo de error cuando `success === false`
+- Funciones expuestas:
+
+Usuarios:
+- `getAllUsers()`
+- `getUserById(id)`
+- `createUser(payload)`
+
+Categorías:
+- `getAllCategories()`
+- `getCategoryById(id)`
+- `createCategory(payload)`
+
+Productos:
+- `getAllProducts()`
+- `getProductById(id)`
+- `createProduct(payload)`
+
+Auditoría:
+- `getAllAuditLogs()`
+- `getAuditLogById(id)`
+- `createAuditLog(payload)`
+
+#### `assets/js/index.js`
+Se amplió el barril para exportar también las funciones del módulo API, manteniendo una única puerta de entrada para imports del frontend.
+
+#### `assets/js/usuarios.js`
+Se migró el consumo principal de usuarios de almacenamiento local a backend:
+
+- Listado remoto de usuarios:
+  - `getAllUsers()`
+- Creación remota de usuarios:
+  - `createUser({ documento, nombre, rol })`
+- Tabla ajustada:
+  - se muestra `documento` (en lugar de `username` en el flujo administrativo conectado a API).
+- Se conserva autenticación demo (`admin/admin123`) para no romper flujo de acceso existente.
+- Se mantiene fallback visual para continuidad de UI si hay falla de red/API.
+
+#### `assets/js/inventario.js`
+Se integró con backend para categorías/productos y trazabilidad:
+
+- Inicialización asíncrona de datos:
+  - carga de categorías, productos y usuarios.
+- Categorías:
+  - listado y selects dinámicos con `getAllCategories()`
+  - creación con `createCategory()`
+- Productos:
+  - render de inventario con datos de `getAllProducts()`
+  - creación con `createProduct()` enviando JSON al backend
+- Auditoría complementaria:
+  - al crear producto se intenta registrar evento con `createAuditLog()`.
+- Se eliminaron dependencias principales de `localStorage` para inventario como fuente de verdad.
+
+#### `assets/js/auditoria.js`
+Se reemplazó lógica basada en inventario local por consumo backend:
+
+- Carga de logs:
+  - `getAllAuditLogs()`
+- Resolución de usuarios:
+  - `getAllUsers()`
+- Registro de hallazgos:
+  - `createAuditLog()` enviando JSON
+- Reporte:
+  - agrupación por usuario con datos reales del backend
+  - render en tabla/resumen dinámicos.
+
+#### `assets/js/movimientos.js`
+Se verificó compatibilidad con la integración actual.
+- Estado: sin cambios obligatorios para la conexión inicial, mantiene su flujo de validación local sin romper navegación ni arquitectura.
+
+#### Resultado funcional de la integración
+- Frontend consumiendo endpoints REST reales:
+  - `/usuarios`
+  - `/categorias`
+  - `/productos`
+  - `/auditoria`
+- Formularios principales enviando JSON al backend.
+- Render dinámico de tablas/listados basado en respuesta del servidor.
+- Se preserva arquitectura modular del frontend y estilo visual existente.
