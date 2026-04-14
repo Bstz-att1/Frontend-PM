@@ -1,4 +1,5 @@
 import { createAuditLog, getAllUsers } from "./api.js";
+import { getSessionUser } from "./auth.js";
 
 export function renderMovimientosSection(content, options = {}) {
   content.innerHTML = `
@@ -30,18 +31,6 @@ export function renderMovimientosSection(content, options = {}) {
   const form = content.querySelector("#movimientos-form");
   const errorsContainer = content.querySelector("#movimientos-errors");
 
-  function getSessionUser() {
-    try {
-      const sessionRaw = sessionStorage.getItem("rg_current_user");
-      if (!sessionRaw) return null;
-      const parsed = JSON.parse(sessionRaw);
-      if (parsed?.id) return parsed;
-      return null;
-    } catch {
-      return null;
-    }
-  }
-
   let usuarios = [];
 
   async function initUsers() {
@@ -66,7 +55,7 @@ export function renderMovimientosSection(content, options = {}) {
     const cantidad = Number(form.cantidad.value);
     const motivo = form.motivo.value.trim();
 
-    const soloTextoRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]+$/;
+const soloTextoRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü0-9\s.,\-#()/_]+$/;
 
     if (!tipo) {
       errores.push("Debe seleccionar el tipo de movimiento.");
@@ -95,8 +84,10 @@ export function renderMovimientosSection(content, options = {}) {
 
     const usuarioSesion = getSessionUser();
     const usuarioId =
-      usuarioSesion?.id ||
-      (usuarios.length > 0 ? Number(usuarios[0].id) : 1);
+      Number(usuarioSesion?.id) ||
+      (usuarios.length > 0 ? Number(usuarios[0].id) : 1); // Fallback to admin for testing
+
+    // No validation - use fallback if needed
 
     const accion = tipo === "entrada" ? "MOVIMIENTO_ENTRADA" : "MOVIMIENTO_SALIDA";
     const detalles = `Producto: ${producto} | Cantidad: ${cantidad} | Motivo: ${motivo}`;
@@ -117,8 +108,15 @@ export function renderMovimientosSection(content, options = {}) {
         form.tipoMovimiento.value = options.defaultTipo;
       }
     } catch (error) {
+      const backendErrors = Array.isArray(error?.errors)
+        ? error.errors
+        : error?.payload?.errors
+        ? [error.payload.errors]
+        : [];
+
       renderErrors(errorsContainer, [
         error.message || "No se pudo registrar el movimiento en el backend.",
+        ...backendErrors,
       ]);
     }
   });
