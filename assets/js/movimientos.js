@@ -1,3 +1,5 @@
+import { createAuditLog, getAllUsers } from "./api.js";
+
 export function renderMovimientosSection(content, options = {}) {
   content.innerHTML = `
     <h2>Movimientos</h2>
@@ -28,11 +30,34 @@ export function renderMovimientosSection(content, options = {}) {
   const form = content.querySelector("#movimientos-form");
   const errorsContainer = content.querySelector("#movimientos-errors");
 
+  function getSessionUser() {
+    try {
+      const sessionRaw = sessionStorage.getItem("rg_current_user");
+      if (!sessionRaw) return null;
+      const parsed = JSON.parse(sessionRaw);
+      if (parsed?.id) return parsed;
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  let usuarios = [];
+
+  async function initUsers() {
+    try {
+      const apiUsers = await getAllUsers();
+      usuarios = Array.isArray(apiUsers) ? apiUsers : [];
+    } catch {
+      usuarios = [];
+    }
+  }
+
   if (options.defaultTipo) {
     form.tipoMovimiento.value = options.defaultTipo;
   }
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const errores = [];
 
@@ -63,8 +88,42 @@ export function renderMovimientosSection(content, options = {}) {
       errores.push("El motivo debe contener solo texto para documentar correctamente la trazabilidad del movimiento.");
     }
 
-    renderErrors(errorsContainer, errores);
+    if (errores.length > 0) {
+      renderErrors(errorsContainer, errores);
+      return;
+    }
+
+    const usuarioSesion = getSessionUser();
+    const usuarioId =
+      usuarioSesion?.id ||
+      (usuarios.length > 0 ? Number(usuarios[0].id) : 1);
+
+    const accion = tipo === "entrada" ? "MOVIMIENTO_ENTRADA" : "MOVIMIENTO_SALIDA";
+    const detalles = `Producto: ${producto} | Cantidad: ${cantidad} | Motivo: ${motivo}`;
+
+    try {
+      await createAuditLog({
+        usuario_id: usuarioId,
+        accion,
+        tabla_afectada: "productos",
+        registro_id: 0,
+        detalles,
+      });
+
+      renderErrors(errorsContainer, []);
+      errorsContainer.innerHTML = `<p>Movimiento registrado correctamente.</p>`;
+      form.reset();
+      if (options.defaultTipo) {
+        form.tipoMovimiento.value = options.defaultTipo;
+      }
+    } catch (error) {
+      renderErrors(errorsContainer, [
+        error.message || "No se pudo registrar el movimiento en el backend.",
+      ]);
+    }
   });
+
+  initUsers();
 }
 
 function renderErrors(container, errors) {
