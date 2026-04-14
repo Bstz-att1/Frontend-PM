@@ -6,9 +6,9 @@ Aplicación frontend para gestión visual de módulos del sistema (usuarios, inv
 
 ## Estado actual del repositorio
 
-Este repositorio contiene actualmente **solo la capa frontend**.
+Este repositorio contiene la **capa frontend**, integrada para consumir un backend REST local mediante JWT.
 
-No incluye backend/API en esta estructura.
+El backend esperado corre en `http://localhost:3000` y expone autenticación + módulos protegidos por rol.
 
 ---
 
@@ -31,7 +31,9 @@ Frontend/
     │   └── Gemini_Generated_Image_717eyy717eyy717e.png
     └── js/
         ├── administracion.js
+        ├── api.js
         ├── auditoria.js
+        ├── auth.js
         ├── index.js
         ├── inventario.js
         ├── main.js
@@ -145,6 +147,7 @@ http://localhost:5500
 - HTML5
 - CSS3 (estilos modulares por secciones)
 - JavaScript Vanilla (sin framework frontend)
+- Integración con backend REST (JWT Bearer)
 
 ---
 
@@ -153,6 +156,45 @@ http://localhost:5500
 - Interfaz frontend modular por secciones.
 - Organización de estilos por componentes visuales principales.
 - Organización de scripts por módulos funcionales de negocio.
+- Login real contra backend (`/auth/login`).
+- Envío automático de token JWT en peticiones API.
+- Control de interfaz por rol (`admin` / `user`) para administración.
+
+---
+
+## Roles y permisos en frontend
+
+- `admin`
+  - acceso completo a la gestión de usuarios (visualiza formulario de creación y listado administrativo).
+- `user`
+  - puede autenticarse y usar módulos permitidos por backend, pero no ve gestión administrativa de usuarios.
+
+> La autorización real de seguridad se valida en backend con middleware JWT + `checkRole(...)`; el frontend aplica control visual de UX.
+
+---
+
+## Integración con backend (JWT)
+
+### Endpoint de login
+- `POST http://localhost:3000/auth/login`
+- Body:
+```json
+{
+  "username": "admin",
+  "password": "tu_password"
+}
+```
+
+### Header requerido en peticiones protegidas
+```http
+Authorization: Bearer <token>
+```
+
+### Módulos API consumidos desde frontend
+- `/usuarios`
+- `/categorias`
+- `/productos`
+- `/auditoria`
 
 ---
 
@@ -161,4 +203,5 @@ http://localhost:5500
 - Mantener la estructura de carpetas `assets/css`, `assets/js`, `assets/img`.
 - Mantener nombres de archivos coherentes con su módulo.
 - Documentar nuevos cambios en `changelog.md`.
-- Si se agrega backend en el futuro, documentarlo en una sección separada para no mezclar estado real vs planificación.
+- Mantener `auth.js` como punto único de sesión/token.
+- Mantener `api.js` como punto único de consumo HTTP autenticado.
