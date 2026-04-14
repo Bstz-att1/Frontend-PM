@@ -1,62 +1,31 @@
 import { getAllUsers, createUser } from "./api.js";
-
-const SESSION_USER_KEY = "rg_current_user";
+import { login, getSessionUser, logout, hasRole } from "./auth.js";
 
 const FALLBACK_USERS = [
   {
     id: 1,
     nombre: "Administrador General",
     documento: "1000000000",
+    username: "admin",
     rol: "admin",
   },
 ];
 
 function escapeHtml(value = "") {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replace(/"/g, "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function setCurrentSession(user) {
-  const safeUser = {
-    id: user.id,
-    nombre: user.nombre,
-    username: user.username,
-    rol: user.rol,
-  };
-  sessionStorage.setItem(SESSION_USER_KEY, JSON.stringify(safeUser));
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")   
+        .replaceAll("'", "&#39;");  
 }
 
 export function getCurrentSessionUser() {
-  const raw = sessionStorage.getItem(SESSION_USER_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch (error) {
-    sessionStorage.removeItem(SESSION_USER_KEY);
-    return null;
-  }
+  return getSessionUser();
 }
 
 export function logoutSessionUser() {
-  sessionStorage.removeItem(SESSION_USER_KEY);
-}
-
-export function tryLogin(username, password) {
-  if (username === "admin" && password === "admin123") {
-    setCurrentSession({
-      id: 1,
-      nombre: "Administrador General",
-      username: "admin",
-      rol: "Administrador",
-    });
-    return getCurrentSessionUser();
-  }
-
-  return null;
+  logout();
 }
 
 function renderUsersTable(container, users) {
@@ -72,6 +41,7 @@ function renderUsersTable(container, users) {
         <td>${escapeHtml(String(user.id ?? ""))}</td>
         <td>${escapeHtml(user.nombre || "")}</td>
         <td>${escapeHtml(user.documento ? String(user.documento) : "N/A")}</td>
+        <td>${escapeHtml(user.username || "N/A")}</td>
         <td>${escapeHtml(user.rol || "")}</td>
       </tr>
     `
@@ -86,6 +56,7 @@ function renderUsersTable(container, users) {
             <th>ID</th>
             <th>Nombre</th>
             <th>Documento</th>
+            <th>Username</th>
             <th>Rol</th>
           </tr>
         </thead>
@@ -96,6 +67,18 @@ function renderUsersTable(container, users) {
 }
 
 export function renderUsuariosSection(content) {
+  const isAdmin = hasRole("admin");
+
+  if (!isAdmin) {
+    content.innerHTML = `
+      <h2>Administración de usuarios</h2>
+      <section class="panel-card">
+        <p>No tienes permisos para gestionar usuarios. Este módulo es solo para administradores.</p>
+      </section>
+    `;
+    return;
+  }
+
   content.innerHTML = `
     <h2>Administración de usuarios</h2>
     <p>Gestiona cuentas internas y consulta el listado dinámico con una visualización clara y profesional.</p>
@@ -108,6 +91,12 @@ export function renderUsuariosSection(content) {
 
         <label for="usr-documento">Documento</label>
         <input id="usr-documento" name="documento" type="text" placeholder="Ej: 1020304050" required />
+
+        <label for="usr-username">Username</label>
+        <input id="usr-username" name="username" type="text" placeholder="Ej: laura.mendez" required />
+
+        <label for="usr-password">Contraseña</label>
+        <input id="usr-password" name="password" type="password" placeholder="Mínimo 6 caracteres" required />
 
         <label for="usr-rol">Rol</label>
         <select id="usr-rol" name="rol" required>
@@ -148,11 +137,14 @@ export function renderUsuariosSection(content) {
 
     const nombre = form.nombre.value.trim();
     const documento = form.documento.value.trim();
+    const username = form.username.value.trim();
+    const password = form.password.value.trim();
     const rol = form.rol.value.trim();
 
     const errores = [];
     const soloTextoRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$/;
     const soloNumerosRegex = /^\d+$/;
+    const usernameRegex = /^[a-zA-Z0-9._-]+$/;
 
     if (!nombre) {
       errores.push("El nombre es obligatorio.");
@@ -164,6 +156,18 @@ export function renderUsuariosSection(content) {
       errores.push("El documento es obligatorio.");
     } else if (!soloNumerosRegex.test(documento)) {
       errores.push("El documento debe contener solo números.");
+    }
+
+    if (!username) {
+      errores.push("El username es obligatorio.");
+    } else if (!usernameRegex.test(username)) {
+      errores.push("El username solo puede contener letras, números, punto, guión y guión bajo.");
+    }
+
+    if (!password) {
+      errores.push("La contraseña es obligatoria.");
+    } else if (password.length < 6) {
+      errores.push("La contraseña debe tener mínimo 6 caracteres.");
     }
 
     if (!rol) {
@@ -181,6 +185,8 @@ export function renderUsuariosSection(content) {
       await createUser({
         documento,
         nombre,
+        username,
+        password,
         rol,
       });
 
@@ -219,14 +225,13 @@ export function renderLoginSection(content, onLoginSuccess) {
         <button type="submit">Iniciar sesión</button>
         <div id="login-errors" aria-live="polite"></div>
       </form>
-      <p class="auth-help">Usuario demo: <strong>admin</strong> / Contraseña: <strong>admin123</strong></p>
     </section>
   `;
 
   const form = content.querySelector("#login-form");
   const errorsContainer = content.querySelector("#login-errors");
 
-  form.addEventListener("submit", (event) => {
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const username = form.username.value.trim();
@@ -244,15 +249,14 @@ export function renderLoginSection(content, onLoginSuccess) {
       return;
     }
 
-    const loggedUser = tryLogin(username, password);
-
-    if (!loggedUser) {
-      errorsContainer.innerHTML =
-        "<ul><li>Credenciales inválidas. Verifica e intenta nuevamente.</li></ul>";
-      return;
+    try {
+      const loggedUser = await login(username, password);
+      errorsContainer.innerHTML = "<p>Autenticación exitosa. Redirigiendo...</p>";
+      onLoginSuccess(loggedUser);
+    } catch (error) {
+      errorsContainer.innerHTML = `<ul><li>${escapeHtml(
+        error.message || "Credenciales inválidas. Verifica e intenta nuevamente."
+      )}</li></ul>`;
     }
-
-    errorsContainer.innerHTML = "<p>Autenticación exitosa. Redirigiendo...</p>";
-    onLoginSuccess(loggedUser);
   });
 }
