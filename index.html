@@ -3,47 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Gestión de Inventario</title>
+
+  <!-- SEO / descripción básica -->
+  <meta name="description" content="Sistema de Inventario — El Rincón Gastronómico">
+  <meta name="theme-color" content="#e67e22">
+
+  <title>El Rincón Gastronómico · Inventario</title>
+
+  <!-- Favicon (evita el 404 automático de /favicon.ico) -->
+  <link rel="icon" type="image/png" href="/assets/img/Gemini_Generated_Image_717eyy717eyy717e.png">
+  <link rel="apple-touch-icon" href="/assets/img/Gemini_Generated_Image_717eyy717eyy717e.png">
+
+  <!-- Fuente Inter (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Estilos globales de la aplicación -->
   <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
-<body class="app">
-  <header class="site-header">
-    <div class="site-header__brand">
-      <img class="site-header__logo" src="./assets/img/Gemini_Generated_Image_717eyy717eyy717e.png" alt="Logo de El Rincón Gastronómico">
-      <h1 class="site-header__title">Gestión Interna de Inventario</h1>
+<body>
+
+  <!--
+    Punto de montaje del SPA.
+    Todo el HTML de la aplicación (login, shell, secciones)
+    se inyecta aquí dinámicamente mediante el router.
+  -->
+  <div id="app" aria-live="polite" aria-atomic="false">
+    <!-- Estado de carga inicial -->
+    <div style="
+      display:flex;flex-direction:column;align-items:center;
+      justify-content:center;min-height:100vh;gap:1rem;
+      font-family:'Inter',sans-serif;color:#64748b;
+    ">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+           viewBox="0 0 24 24" fill="none" stroke="#e67e22"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" opacity=".3"/>
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83"/>
+      </svg>
+      <p style="margin:0;font-weight:500">Cargando…</p>
     </div>
-    <div class="site-header__actions">
-      <nav class="site-header__nav" aria-label="Navegación principal administrativa">
-        <ul class="site-header__menu">
-          <li class="site-header__menu-item"><a class="site-header__menu-link" href="#">Inventario</a></li>
-          <li class="site-header__menu-item"><a class="site-header__menu-link" href="#">Movimientos</a></li>
-          <li class="site-header__menu-item"><a class="site-header__menu-link" href="#">Auditoría</a></li>
-          <li class="site-header__menu-item"><a class="site-header__menu-link" href="#">Administración</a></li>
-        </ul>
-      </nav>
-      <div class="site-header__session-actions" id="session-actions"></div>
-    </div>
-  </header>
+  </div>
 
-  <main class="layout layout--main">
-    <aside class="sidebar sidebar--card">
-      <h2 class="sidebar__title">Menú interno</h2>
-      <ul class="sidebar__menu">
-        <li class="sidebar__item"><a class="sidebar__link" href="#">Panel principal</a></li>
-        <li class="sidebar__item"><a class="sidebar__link" href="#">Entradas de stock</a></li>
-        <li class="sidebar__item"><a class="sidebar__link" href="#">Salidas de stock</a></li>
-        <li class="sidebar__item"><a class="sidebar__link" href="#">Ajustes de inventario</a></li>
-        <li class="sidebar__item"><a class="sidebar__link" href="#">Reportes</a></li>
-      </ul>
-    </aside>
-
-    <section class="main-content main-content--card"></section>
-  </main>
-
-  <footer class="site-footer">
-    <p class="site-footer__text">&copy; 2026 El Rincón Gastronómico - Sistema de Inventario</p>
-  </footer>
-
-  <script type="module" src="./assets/js/main.js"></script>
+  <!-- Punto de entrada del SPA (Vite + ES Modules) -->
+  <script type="module" src="./src/main.js"></script>
 </body>
 </html>
