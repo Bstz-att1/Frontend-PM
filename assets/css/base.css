@@ -1,105 +1,196 @@
+/* ============================================
+   VARIABLES DE DISEÑO — SISTEMA RINCÓN GASTRONÓMICO
+   Paleta: Azules oscuros marinos + tonos amaderados
+   Estilo: Minimalista, profesional, elegante
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --color-primary: #2f5d8a;
-  --color-primary-strong: #244a6d;
-  --color-secondary: #4c8c7a;
-  --color-accent: #2563eb;
+  /* ── Colores primarios (azul marino profundo) ── */
+  --color-primary:        #1e3a5f;
+  --color-primary-strong: #122540;
+  --color-primary-light:  #2e5c8e;
+  --color-primary-hover:  #163050;
 
-  --color-bg: #f4f7fc;
-  --color-surface: #ffffff;
-  --color-surface-soft: #f8fbff;
-  --color-border: #d8e3f1;
-  --color-surface-alt: #fbfcff;
-  --color-soft-hover: rgba(47, 93, 138, 0.08);
-  --color-overlay-soft: rgba(37, 99, 235, 0.15);
+  /* ── Colores secundarios (madera / ámbar cálido) ── */
+  --color-secondary:      #8b6914;
+  --color-accent:         #c49a2e;
+  --color-wood:           #a07830;
+  --color-wood-light:     #d4a853;
+  --color-wood-dark:      #7a5220;
 
-  --color-text: #1f2a37;
-  --color-text-muted: #4b5563;
-  --color-text-soft: #6b7280;
-  --color-on-primary: #ffffff;
+  /* ── Fondos (crema cálida neutra) ── */
+  --color-bg:             #f2ede8;
+  --color-surface:        #fdfcfa;
+  --color-surface-soft:   #f8f4ef;
+  --color-surface-alt:    #faf7f3;
+  --color-surface-dark:   #ede8e2;
 
-  --color-success: #2e7d32;
-  --color-warning: #d97706;
-  --color-danger: #c62828;
+  /* ── Bordes y divisores ── */
+  --color-border:         #d9cfc2;
+  --color-border-light:   #e8e1d9;
+  --color-border-strong:  #c4b8a8;
 
-  --font-base: 'Segoe UI', Arial, sans-serif;
+  /* ── Efectos de hover y overlay ── */
+  --color-soft-hover:    rgba(30, 58, 95, 0.06);
+  --color-overlay-soft:  rgba(196, 154, 46, 0.12);
+  --color-wood-overlay:  rgba(160, 120, 48, 0.08);
 
-  --radius-lg: 14px;
-  --radius-md: 10px;
+  /* ── Texto ── */
+  --color-text:           #1a1f28;
+  --color-text-muted:     #4a5568;
+  --color-text-soft:      #718096;
+  --color-text-light:     #a0aec0;
+  --color-on-primary:     #ffffff;
+  --color-on-accent:      #ffffff;
+
+  /* ── Estados de feedback ── */
+  --color-success:        #276749;
+  --color-success-bg:     #f0fff4;
+  --color-warning:        #b7791f;
+  --color-warning-bg:     #fffbeb;
+  --color-danger:         #9b2c2c;
+  --color-danger-bg:      #fff5f5;
+  --color-info:           #2b6cb0;
+  --color-info-bg:        #ebf8ff;
+
+  /* ── Tipografía ── */
+  --font-base: 'Inter', 'Segoe UI', Arial, sans-serif;
+  --font-mono: 'Fira Code', 'Consolas', monospace;
+
+  /* ── Bordes redondeados ── */
+  --radius-sm:   6px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   16px;
   --radius-pill: 999px;
 
-  --shadow-sm: 0 8px 20px rgba(31, 42, 55, 0.08);
-  --shadow-md: 0 14px 30px rgba(31, 42, 55, 0.12);
+  /* ── Sombras ── */
+  --shadow-xs: 0 1px 3px rgba(15, 25, 40, 0.06);
+  --shadow-sm: 0 2px 8px rgba(15, 25, 40, 0.08), 0 1px 2px rgba(15, 25, 40, 0.04);
+  --shadow-md: 0 4px 16px rgba(15, 25, 40, 0.12), 0 2px 4px rgba(15, 25, 40, 0.06);
+  --shadow-lg: 0 8px 32px rgba(15, 25, 40, 0.16), 0 4px 8px rgba(15, 25, 40, 0.08);
 
-  --transition-base: all 0.24s ease;
+  /* ── Transiciones ── */
+  --transition-fast: all 0.15s ease;
+  --transition-base: all 0.22s ease;
+  --transition-slow: all 0.35s ease;
 }
 
+/* ── Modo oscuro ─────────────────────────────────────────────────────────── */
+[data-theme="dark"] {
+  --color-primary:        #4a7eb5;
+  --color-primary-strong: #3568a0;
+  --color-primary-light:  #5e90c0;
+  --color-primary-hover:  #3a6ea8;
+
+  --color-secondary:      #c4902e;
+  --color-accent:         #d4a853;
+  --color-wood:           #b8892a;
+  --color-wood-light:     #e0b86a;
+
+  --color-bg:             #0d1520;
+  --color-surface:        #141e2e;
+  --color-surface-soft:   #1a2638;
+  --color-surface-alt:    #1f2e42;
+  --color-surface-dark:   #0a1018;
+
+  --color-border:         #2a3d55;
+  --color-border-light:   #243448;
+  --color-border-strong:  #3a5070;
+
+  --color-soft-hover:    rgba(74, 126, 181, 0.12);
+  --color-overlay-soft:  rgba(212, 168, 83, 0.18);
+
+  --color-text:           #e8edf5;
+  --color-text-muted:     #b4c3d4;
+  --color-text-soft:      #8a9bb0;
+  --color-text-light:     #5a7090;
+
+  --color-success:        #6ec490;
+  --color-success-bg:     #1a3028;
+  --color-warning:        #f0b353;
+  --color-warning-bg:     #2d2010;
+  --color-danger:         #e87070;
+  --color-danger-bg:      #2d1010;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* ── Reset base ──────────────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-[data-theme="dark"] {
-  --color-primary: #4f8dc8;
-  --color-primary-strong: #3b6f9f;
-  --color-secondary: #5aa893;
-  --color-accent: #60a5fa;
-
-  --color-bg: #0f1722;
-  --color-surface: #172230;
-  --color-surface-soft: #1d2b3c;
-  --color-border: #2f435b;
-  --color-surface-alt: #223247;
-  --color-soft-hover: rgba(96, 165, 250, 0.18);
-  --color-overlay-soft: rgba(96, 165, 250, 0.24);
-
-  --color-text: #e6edf7;
-  --color-text-muted: #bfccdd;
-  --color-text-soft: #9fb2ca;
-  --color-on-primary: #f8fbff;
-
-  --color-success: #7ad38a;
-  --color-warning: #f6b85f;
-  --color-danger: #ef7f7f;
-
-  --shadow-sm: 0 8px 20px rgba(5, 10, 18, 0.4);
-  --shadow-md: 0 14px 30px rgba(5, 10, 18, 0.5);
-}
-
 body.app {
   margin: 0;
   min-height: 100vh;
   font-family: var(--font-base);
+  font-size: 0.9375rem;
   color: var(--color-text);
-  line-height: 1.5;
-  background:
-    radial-gradient(circle at 10% 8%, rgba(76, 140, 122, 0.15), transparent 30%),
-    radial-gradient(circle at 88% 12%, rgba(37, 99, 235, 0.12), transparent 34%),
-    var(--color-bg);
+  line-height: 1.6;
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(ellipse at 5% 0%, rgba(30, 58, 95, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 95% 100%, rgba(160, 120, 48, 0.05) 0%, transparent 50%);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Layout principal ────────────────────────────────────────────────────── */
 .layout.layout--main {
-  width: min(1180px, calc(100% - 2rem));
-  margin: 1.1rem auto;
+  width: min(1220px, calc(100% - 2rem));
+  margin: 1rem auto;
   display: grid;
-  grid-template-columns: 250px 1fr;
-  gap: 1.1rem;
-  min-height: calc(100vh - 122px);
+  grid-template-columns: 240px 1fr;
+  gap: 1rem;
+  min-height: calc(100vh - 112px);
+  align-items: start;
 }
 
+/* ── Tarjetas base ───────────────────────────────────────────────────────── */
 .main-content--card,
 .sidebar--card {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
 
+/* ── Enlace base ─────────────────────────────────────────────────────────── */
 a {
-  color: inherit;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: var(--transition-fast);
 }
 
+a:hover {
+  color: var(--color-primary-strong);
+}
+
+/* ── Utilidades de texto ─────────────────────────────────────────────────── */
+.text-muted {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* ── Scrollbar minimalista ───────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-surface-soft); }
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-strong);
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-soft); }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 860px) {
   .layout.layout--main {
     grid-template-columns: 1fr;
-    gap: 0.95rem;
+    gap: 0.875rem;
+    width: calc(100% - 1.5rem);
   }
 }

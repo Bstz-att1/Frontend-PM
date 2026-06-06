@@ -1,48 +1,119 @@
+/* ============================================
+   SIDEBAR — MENÚ LATERAL
+   ============================================ */
+
 .sidebar {
-  position: relative;
+  position: sticky;
+  top: calc(60px + 1rem); /* header height + gap */
   overflow: hidden;
-  padding: 1.1rem;
-  color: var(--color-text);
-  border: 1px solid #ccdaec;
-  background: linear-gradient(180deg, #ffffff 0%, #f4f9ff 100%);
+  padding: 1.25rem 1rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
+/* Borde decorativo superior (madera/ámbar) */
 .sidebar::before {
   content: "";
   position: absolute;
-  inset: 0 0 auto 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
 }
 
+/* ── Título del sidebar ─────────────────────────────────────────────────── */
 .sidebar__title {
-  margin: 0 0 0.85rem;
-  color: #173a5e;
-  font-size: 1.08rem;
+  margin: 0 0 1rem;
+  padding: 0 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-soft);
 }
 
+/* ── Lista de enlaces ───────────────────────────────────────────────────── */
 .sidebar__menu {
   margin: 0;
   padding: 0;
   list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
 }
 
-.sidebar__item + .sidebar__item {
-  margin-top: 0.45rem;
-}
-
+/* ── Enlace de sidebar ──────────────────────────────────────────────────── */
 .sidebar__link {
-  display: block;
-  padding: 0.45rem 0.65rem;
-  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-md);
   text-decoration: none;
-  color: var(--color-primary);
-  font-weight: 600;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
   transition: var(--transition-base);
+  border: 1px solid transparent;
+}
+
+.sidebar__link svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--color-text-soft);
+  transition: var(--transition-fast);
 }
 
 .sidebar__link:hover {
-  color: #0f3e67;
-  background-color: rgba(47, 93, 138, 0.12);
-  transform: translateX(3px);
+  background: var(--color-soft-hover);
+  color: var(--color-primary);
+  border-color: var(--color-border-light);
+  transform: translateX(2px);
+}
+
+.sidebar__link:hover svg {
+  color: var(--color-primary);
+}
+
+.sidebar__link--active,
+.sidebar__link:focus-visible {
+  background: rgba(30, 58, 95, 0.1);
+  color: var(--color-primary);
+  border-color: rgba(30, 58, 95, 0.15);
+  font-weight: 600;
+  outline: none;
+}
+
+.sidebar__link--active svg {
+  color: var(--color-primary);
+}
+
+/* ── Divisor ────────────────────────────────────────────────────────────── */
+.sidebar__divider {
+  height: 1px;
+  background: var(--color-border-light);
+  margin: 0.75rem 0.5rem;
+}
+
+/* ── Responsive (sidebar va arriba en móvil) ────────────────────────────── */
+@media (max-width: 860px) {
+  .sidebar {
+    position: static;
+    border-radius: var(--radius-lg);
+  }
+
+  .sidebar__menu {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  .sidebar__link {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.825rem;
+  }
 }

@@ -1,12 +1,51 @@
+/* ============================================
+   FOOTER — PIE DE PÁGINA
+   ============================================ */
+
 .site-footer {
-  margin-top: 0.2rem;
-  padding: 1rem;
-  text-align: center;
+  margin-top: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
   color: var(--color-on-primary);
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-strong) 100%);
+  border-top: 2px solid rgba(196, 154, 46, 0.3);
 }
 
 .site-footer__text {
   margin: 0;
-  letter-spacing: 0.2px;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  opacity: 0.85;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.site-footer__text--muted {
+  opacity: 0.5;
+}
+
+/* Separador decorativo dentro del texto (·) */
+.site-footer__sep {
+  opacity: 0.45;
+}
+
+/* Alias mantenido por compatibilidad si existiera CSS anterior */
+.site-footer__separator {
+  opacity: 0.35;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 860px) {
+  .site-footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.75rem 1rem;
+    text-align: center;
+  }
 }
